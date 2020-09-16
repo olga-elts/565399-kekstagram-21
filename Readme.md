@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Ольга Ельцова](https://up.htmlacademy.ru/javascript/21/user/565399).
-* Наставник: `Неизвестно`.
+* Наставник: [Антон Попов](https://up.htmlacademy.ru/adaptive/20/user/78239).
 
 ---
 

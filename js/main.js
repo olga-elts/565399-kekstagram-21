@@ -39,17 +39,17 @@ const NUMBER_PHOTOS = 25;
 const NumberLikes = {
   MIN: 15,
   MAX: 200
-}
+};
 
 const NumberComments = {
   MIN: 1,
   MAX: 3
-}
+};
 
 const NumberAvatar = {
   MIN: 1,
   MAX: 6
-}
+};
 
 /**
  * "Подбрасывает монетку" - возвращает случайное булевое значение
@@ -77,14 +77,13 @@ const getPhotosSrcs = function (numberUrls) {
  * @param {Array} array -  случайный массив
  */
 const shuffleArray = function (array) {
-  var j, swap;
-  for(var i = array.length - 1; i > 0; i--) {
-    j = Math.floor(Math.random()*(i + 1));
-    swap = array[j];
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    let swap = array[j];
     array[j] = array[i];
     array[i] = swap;
   }
-}
+};
 
 /**
  * Возвращает рандомное целое число между задаваемыми min и max
@@ -140,7 +139,7 @@ const pictureTemplate = document.querySelector(`#picture`).content.querySelector
 
 /**
  * Отрисовывает фотографии, используя данные из массива объектов - фотографий
- * @param {number} photoElem - элемент массива фотографий (объект с описанием)
+ * @param {number} photosElem - элемент массива фотографий (объект с описанием)
  * @return {Object} - фрагмент кода HTML
  */
 const renderPhoto = function (photosElem) {
@@ -162,3 +161,109 @@ photos.forEach(function (photo) {
 
 const picturesContainer = document.querySelector(`.pictures`);
 picturesContainer.appendChild(fragment);
+
+// module4-task1 Загрузка изображения и показ формы редактирования
+
+const imgUploadPreview = document.querySelector(`.img-upload__preview img`);
+const effectsPreviews = document.querySelectorAll(`.effects__preview`);
+
+/**
+ * Заменяет дефолтную картинку превью и эффектов на загруженную
+ */
+const setUploadedPhoto = function () {
+  imgUploadPreview.src = URL.createObjectURL(uploadFileInput.files[0]);
+  effectsPreviews.forEach(function (effectsPreview) {
+    effectsPreview.style.backgroundImage = `url("` + URL.createObjectURL(uploadFileInput.files[0]) + `")`;
+  });
+};
+
+/**
+ * Закрывает форму редактирования фото при нажатии кнопки Esc
+ * @param {event} evt - событие
+ */
+const onUploadFormEscPress = function (evt) {
+  if (evt.key === `Escape`) {
+    evt.preventDefault();
+    closeUploadForm();
+  }
+};
+
+const body = document.querySelector(`body`);
+const imgUploadForm = document.querySelector(`.img-upload__overlay`);
+const uploadFileInput = document.querySelector(`#upload-file`);
+const uploadCancelBtn = document.querySelector(`#upload-cancel`);
+
+/**
+ * Открывает форму редактирования, добавляет слушитель события keydown
+ * @param {event} evt - событие
+ */
+const openUploadForm = function () {
+  imgUploadForm.classList.remove(`hidden`);
+  body.classList.add(`modal-open`);
+  setUploadedPhoto();
+  document.addEventListener(`keydown`, onUploadFormEscPress);
+};
+
+/**
+ * Закрывает форму редактирования, удаляет слушитель события keydown
+ * @param {event} evt - событие
+ */
+const closeUploadForm = function () {
+  uploadFileInput.value = ``;
+  imgUploadForm.classList.add(`hidden`);
+  body.classList.remove(`modal-open`);
+  document.removeEventListener(`keydown`, onUploadFormEscPress);
+};
+
+uploadFileInput.addEventListener(`change`, function () {
+  openUploadForm();
+});
+
+uploadCancelBtn.addEventListener(`click`, function () {
+  closeUploadForm();
+});
+
+// module4-task1 Перемещение ползунка
+
+const effectLevelPin = document.querySelector(`.effect-level__pin`);
+const effectLevelLine = document.querySelector(`.effect-level__line`);
+const effectLevelDepth = document.querySelector(`.effect-level__depth`);
+
+const getCoords = function (elem) {
+  const box = elem.getBoundingClientRect();
+
+  return {
+    top: box.top + pageYOffset,
+    left: box.left + pageXOffset
+  };
+};
+
+effectLevelPin.addEventListener(`mousedown`, function (evt) {
+  let pinXCoord = evt.clientX;
+  let lineXCoord = getCoords(effectLevelLine).left;
+  let deltaX = pinXCoord - lineXCoord;
+  let deltaXMax = effectLevelLine.offsetWidth;
+
+  const onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    pinXCoord = moveEvt.clientX;
+    deltaX = pinXCoord - lineXCoord;
+
+    if (deltaX >= 0 && deltaX <= deltaXMax) {
+      let effectLevel = deltaX / deltaXMax * 100 + `%`;
+      effectLevelPin.style.left = effectLevel;
+      effectLevelDepth.style.width = effectLevel;
+    }
+  };
+
+  const onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener(`mousemove`, onMouseMove);
+    document.removeEventListener(`mouseup`, onMouseUp);
+  };
+
+  document.addEventListener(`mousemove`, onMouseMove);
+  document.addEventListener(`mouseup`, onMouseUp);
+});

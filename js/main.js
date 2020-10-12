@@ -229,6 +229,11 @@ const effectLevelPin = document.querySelector(`.effect-level__pin`);
 const effectLevelLine = document.querySelector(`.effect-level__line`);
 const effectLevelDepth = document.querySelector(`.effect-level__depth`);
 
+/**
+ * Возвращает координаты элемента относительно документа
+ * @param {Object} elem - DOM-элемент
+ * @return {Object} - объект с координатами элемента по осям Y и X
+ */
 const getCoords = function (elem) {
   const box = elem.getBoundingClientRect();
 
@@ -266,4 +271,56 @@ effectLevelPin.addEventListener(`mousedown`, function (evt) {
 
   document.addEventListener(`mousemove`, onMouseMove);
   document.addEventListener(`mouseup`, onMouseUp);
+});
+
+// module4-task1 Изменение масштаба preview фотографии
+
+const Scale = {
+  STEP: 25,
+  MAX: 100,
+  MIN: 25
+};
+
+const scaleControlSmaller = document.querySelector(`.scale__control--smaller`);
+const scaleControlBigger = document.querySelector(`.scale__control--bigger`);
+const scaleControlValue = document.querySelector(`.scale__control--value`);
+
+/**
+ * Уменьшает масштаб изображения на превью
+ * @param {number} scaleMin - мин. масштаб в %
+ * @param {number} stepDown - шаг уменьшения масштаба в %
+ */
+const scaleDown = function (scaleMin, stepDown) {
+  let scale = parseFloat(scaleControlValue.value);
+  if (scale >= scaleMin + stepDown) {
+    scale -= stepDown;
+  } else {
+    scale = scaleMin;
+  }
+  imgUploadPreview.style.transform = `scale(` + scale / 100 + `)`;
+  scaleControlValue.value = scale + `%`;
+};
+
+/**
+ * Увеличивает масштаб изображения на превью
+ * @param {number} scaleMax - макс. масштаб в %
+ * @param {number} stepUp - шаг увеличения масштаба в %
+ */
+const scaleUp = function (scaleMax, stepUp) {
+  let scale = parseFloat(scaleControlValue.value);
+  if (scale <= scaleMax - stepUp) {
+    scale += stepUp;
+  } else {
+    scale = scaleMax;
+  }
+  imgUploadPreview.style.transform = `scale(` + scale / 100 + `)`;
+  scaleControlValue.value = scale + `%`;
+};
+
+scaleControlSmaller.addEventListener(`click`, function () {
+  scaleDown(Scale.MIN, Scale.STEP);
+});
+
+scaleControlBigger.addEventListener(`click`, function () {
+  scaleUp(Scale.MAX, Scale.STEP);
 });

@@ -223,11 +223,7 @@ uploadCancelBtn.addEventListener(`click`, function () {
   closeUploadForm();
 });
 
-// module4-task1 Перемещение ползунка
-
-const effectLevelPin = document.querySelector(`.effect-level__pin`);
-const effectLevelLine = document.querySelector(`.effect-level__line`);
-const effectLevelDepth = document.querySelector(`.effect-level__depth`);
+// module4-task1 Изменение интенсивности эффекта, примененного к фотографии
 
 /**
  * Возвращает координаты элемента относительно документа
@@ -243,6 +239,63 @@ const getCoords = function (elem) {
   };
 };
 
+const effectToFilter = {
+  'chrome': `grayscale`,
+  'sepia': `sepia`,
+  'marvin': `invert`,
+  'phobos': `blur`,
+  'heat': `brightness`
+};
+
+const filterMinMax = {
+  'grayscale': {
+    MIN: 0,
+    MAX: 1
+  },
+  'sepia': {
+    MIN: 0,
+    MAX: 1
+  },
+  'invert': {
+    MIN: 0,
+    MAX: 100,
+    UNIT: `%`
+  },
+  'blur': {
+    MIN: 0,
+    MAX: 3,
+    UNIT: `px`
+  },
+  'brightness': {
+    MIN: 1,
+    MAX: 3
+  }
+};
+
+/**
+ * Меняет интенсивность эффекта, примененного к фотографии, при перемещении ползунка
+ * @param {number} level - интенсивность эффекта
+ */
+const changeEffectLevel = function (level) {
+  let effectApplied = document.querySelector(`.effects__radio:checked`).value;
+  let filterApplied = effectToFilter[effectApplied];
+  let filterMin = filterMinMax[filterApplied].MIN;
+  let filterMax = filterMinMax[filterApplied].MAX;
+  let filterUnit = ``;
+  if (filterMinMax[filterApplied].UNIT) {
+    filterUnit = filterMinMax[filterApplied].UNIT;
+  }
+  imgUploadPreview.style.filter = filterApplied + `(` + (filterMin + (filterMax - filterMin) * level) + filterUnit + `)`;
+};
+
+// Перемещение ползунка
+
+const effectLevel = document.querySelector(`.effect-level`);
+const effectLevelPin = effectLevel.querySelector(`.effect-level__pin`);
+const effectLevelLine = effectLevel.querySelector(`.effect-level__line`);
+const effectLevelDepth = effectLevel.querySelector(`.effect-level__depth`);
+const effectLevelValue = effectLevel.querySelector(`.effect-level__value`);
+
 effectLevelPin.addEventListener(`mousedown`, function (evt) {
   let pinXCoord = evt.clientX;
   let lineXCoord = getCoords(effectLevelLine).left;
@@ -256,9 +309,11 @@ effectLevelPin.addEventListener(`mousedown`, function (evt) {
     deltaX = pinXCoord - lineXCoord;
 
     if (deltaX >= 0 && deltaX <= deltaXMax) {
-      let effectLevel = deltaX / deltaXMax * 100 + `%`;
-      effectLevelPin.style.left = effectLevel;
-      effectLevelDepth.style.width = effectLevel;
+      let effectLevelCoeff = (deltaX / deltaXMax).toFixed(2);
+      effectLevelPin.style.left = effectLevelCoeff * 100 + `%`;
+      effectLevelDepth.style.width = effectLevelCoeff * 100 + `%`;
+      effectLevelValue.value = effectLevelCoeff * 100;
+      changeEffectLevel(effectLevelCoeff);
     }
   };
 
@@ -271,6 +326,41 @@ effectLevelPin.addEventListener(`mousedown`, function (evt) {
 
   document.addEventListener(`mousemove`, onMouseMove);
   document.addEventListener(`mouseup`, onMouseUp);
+});
+
+// module4-task1 Наложение фильтра на изображение
+
+const effectsRadioBtns = document.querySelectorAll(`.effects__radio`);
+
+/**
+ * Cбрасывает стили ползука, фотографии на превью и значение интенсивности эффекта
+ */
+const resetEffect = function () {
+  effectLevelPin.style.left = ``;
+  effectLevelDepth.style.width = ``;
+  effectLevelValue.value = ``;
+  imgUploadPreview.style.filter = ``;
+};
+
+/**
+ * Применяет эффект к фотографии
+ * @param {string} effect - название эффекта
+ */
+const applyEffect = function (effect) {
+  effectLevel.classList.remove(`hidden`);
+  imgUploadPreview.className = ``;
+  imgUploadPreview.classList.add(`effects__preview--` + effect);
+  if (effect === `none`) {
+    effectLevel.classList.add(`hidden`);
+  }
+};
+
+effectsRadioBtns.forEach(function (effectsRadioBtn) {
+  effectsRadioBtn.addEventListener(`click`, function (evt) {
+    let effect = evt.target.value;
+    resetEffect();
+    applyEffect(effect);
+  });
 });
 
 // module4-task1 Изменение масштаба preview фотографии

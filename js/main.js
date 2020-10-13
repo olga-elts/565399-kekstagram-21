@@ -421,18 +421,27 @@ scaleControlBigger.addEventListener(`click`, function () {
 // module4-task1 Валидация хештегов
 
 const HASHTAG_MAXLENGTH = 20;
+const HASHTAGS_MAXNUMBER = 5;
 
 const re = /^#[а-яА-Я\w]+$/;
 
 const textHashtagsInput = document.querySelector(`.text__hashtags`);
 
+/**
+ * Выводит сообщение о превышении допустимого количества хэштегов
+ * @param {Array} array - массив
+ */
 const checkNumberOfElements = function (array) {
-  if (array.length > 5) {
+  if (array.length > HASHTAGS_MAXNUMBER) {
     textHashtagsInput.setCustomValidity(`Слишком много хэштегов!`);
     // console.log(`Слишком много хэштегов!`);
   }
 };
 
+/**
+ * Выводит сообщение при наличии дублирующихся хэштегов
+ * @param {Array} array - массив
+ */
 const checkDuplicates = function (array) {
   let yesDuplicates = false;
   let arrayUppercase = array.map(function (element) {
@@ -450,6 +459,10 @@ const checkDuplicates = function (array) {
   }
 };
 
+/**
+ * Выводит сообщение в случае превышения длины хэштега или использования в хэштеге недопустимых символов
+ * @param {string} hashtag - элемент массива (хэштег)
+ */
 const checkHashtagValidity = function (hashtag) {
   if (!re.test(hashtag)) {
     textHashtagsInput.setCustomValidity(`Хэштег должен состоять только из букв, чисел и нижнего подчеркивания!`);

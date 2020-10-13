@@ -177,12 +177,15 @@ const setUploadedPhoto = function () {
   });
 };
 
+const ecsIgnoringInput = document.querySelector(`input[name="hashtags"]`);
+const ecsIgnoringTextarea = document.querySelector(`textarea[name="description"]`);
+
 /**
  * Закрывает форму редактирования фото при нажатии кнопки Esc
  * @param {event} evt - событие
  */
 const onUploadFormEscPress = function (evt) {
-  if (evt.key === `Escape`) {
+  if (evt.key === `Escape` && document.activeElement !== ecsIgnoringInput && document.activeElement !== ecsIgnoringTextarea) {
     evt.preventDefault();
     closeUploadForm();
   }
@@ -413,4 +416,58 @@ scaleControlSmaller.addEventListener(`click`, function () {
 
 scaleControlBigger.addEventListener(`click`, function () {
   scaleUp(Scale.MAX, Scale.STEP);
+});
+
+// module4-task1 Валидация хештегов
+
+const HASHTAG_MAXLENGTH = 20;
+
+const re = /^#[а-яА-Я\w]+$/;
+
+const textHashtagsInput = document.querySelector(`.text__hashtags`);
+
+const checkNumberOfElements = function (array) {
+  if (array.length > 5) {
+    textHashtagsInput.setCustomValidity(`Слишком много хэштегов!`);
+    // console.log(`Слишком много хэштегов!`);
+  }
+};
+
+const checkDuplicates = function (array) {
+  let yesDuplicates = false;
+  let arrayUppercase = array.map(function (element) {
+    return element.toUpperCase();
+  });
+  let arrayOfUniques = new Set(arrayUppercase);
+  if (arrayOfUniques.size !== array.length) {
+    yesDuplicates = true;
+  }
+  if (yesDuplicates) {
+    textHashtagsInput.setCustomValidity(`Есть повторяющиеся хэштеги!`);
+    // console.log(`Есть повторяющиеся хэштеги!`);
+  } else {
+    textHashtagsInput.setCustomValidity(``);
+  }
+};
+
+const checkHashtagValidity = function (hashtag) {
+  if (!re.test(hashtag)) {
+    textHashtagsInput.setCustomValidity(`Хэштег должен состоять только из букв, чисел и нижнего подчеркивания!`);
+    // console.log(`Хэштег должен состоять только из букв, чисел и нижнего подчеркивания!`);
+  } else if (hashtag.length > HASHTAG_MAXLENGTH) {
+    textHashtagsInput.setCustomValidity(`Слишком длинный хэштег!`);
+    // console.log(`Слишком длинный хэштег!`);
+  } else {
+    textHashtagsInput.setCustomValidity(``);
+  }
+};
+
+textHashtagsInput.addEventListener(`input`, function () {
+  let hashtags = textHashtagsInput.value.split(` `);
+  hashtags.forEach(function (tag) {
+    checkHashtagValidity(tag);
+  });
+  checkDuplicates(hashtags);
+  checkNumberOfElements(hashtags);
+  // console.log(hashtags);
 });

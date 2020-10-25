@@ -1,6 +1,6 @@
 'use strict';
 
-const names = [
+const NAMES = [
   `Турецкий`,
   `Томми`,
   `Кузен Ави`,
@@ -16,7 +16,7 @@ const names = [
   `Кирпич`
 ];
 
-const quotes = [
+const QUOTES = [
   `Всё отлично!`,
   `В целом всё неплохо. Но не всё.`,
   `Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.`,
@@ -25,7 +25,7 @@ const quotes = [
   `Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!`
 ];
 
-const descriptions = [
+const DESCRIPTIONS = [
   `Вот так выглядит мой отпуск!`,
   `Все кайфы мои`,
   `Тестирую новую камеру`,
@@ -65,9 +65,9 @@ const getRandomBoolean = function () {
  * @return {Array} - массив url фотографий
  */
 const getPhotosSrcs = function (numberUrls) {
-  let photosSrcs = [];
+  const photosSrcs = [];
   for (let i = 1; i <= numberUrls; i++) {
-    photosSrcs.push(`photos/` + i + `.jpg`);
+    photosSrcs.push(`photos/${i}.jpg`);
   }
   return photosSrcs;
 };
@@ -78,10 +78,8 @@ const getPhotosSrcs = function (numberUrls) {
  */
 const shuffleArray = function (array) {
   for (let i = array.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    let swap = array[j];
-    array[j] = array[i];
-    array[i] = swap;
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[j], array[i]] = [array[i], array[j]];
   }
 };
 
@@ -106,7 +104,7 @@ const getRandomElement = function (array) {
   return array[Math.floor(Math.random() * Math.floor(array.length))];
 };
 
-let photosSrcs = getPhotosSrcs(NUMBER_PHOTOS);
+const photosSrcs = getPhotosSrcs(NUMBER_PHOTOS);
 shuffleArray(photosSrcs);
 
 /**
@@ -115,21 +113,25 @@ shuffleArray(photosSrcs);
  * @return {Array} - массив объектов (фотографий)
  */
 const getPhotos = function (photosNumber) {
-  let photos = [];
+  const photos = [];
   for (let i = 0; i < photosNumber; i++) {
-    photos[i] = {};
-    photos[i].url = photosSrcs[i];
-    photos[i].description = getRandomElement(descriptions);
-    photos[i].likes = getRandomNumber(NumberLikes.MIN, NumberLikes.MAX);
-    photos[i].comments = [];
+    const photo = {
+      url: photosSrcs[i],
+      description: getRandomElement(DESCRIPTIONS),
+      likes: getRandomNumber(NumberLikes.MIN, NumberLikes.MAX),
+      comments: []
+    };
+    photos.push(photo);
     for (let j = 0; j < getRandomNumber(NumberComments.MIN, NumberComments.MAX); j++) {
-      photos[i].comments[j] = {};
-      photos[i].comments[j].avatar = `img/avatar-` + getRandomNumber(NumberAvatar.MIN, NumberAvatar.MAX) + `.svg`;
-      photos[i].comments[j].message = getRandomElement(quotes);
+      let message = getRandomElement(QUOTES);
       if (getRandomBoolean()) {
-        photos[i].comments[j].message += ` ` + getRandomElement(quotes);
+        message += ` ` + getRandomElement(QUOTES);
       }
-      photos[i].comments[j].name = getRandomElement(names);
+      photo.comments.push({
+        avatar: `img/avatar-${getRandomNumber(NumberAvatar.MIN, NumberAvatar.MAX)}.svg`,
+        message,
+        name: getRandomElement(NAMES)
+      });
     }
   }
   return photos;
@@ -139,11 +141,11 @@ const pictureTemplate = document.querySelector(`#picture`).content.querySelector
 
 /**
  * Отрисовывает фотографии, используя данные из массива объектов - фотографий
- * @param {number} photosElem - элемент массива фотографий (объект с описанием)
+ * @param {Object} photosElem - объект фотографии
  * @return {Object} - фрагмент кода HTML
  */
 const renderPhoto = function (photosElem) {
-  let photo = pictureTemplate.cloneNode(true);
+  const photo = pictureTemplate.cloneNode(true);
 
   photo.querySelector(`.picture__img`).src = photosElem.url;
   photo.querySelector(`.picture__comments`).textContent = photosElem.comments.length;
@@ -152,7 +154,7 @@ const renderPhoto = function (photosElem) {
   return photo;
 };
 
-const photos = getPhotos(photosSrcs.length);
+const photos = getPhotos(NUMBER_PHOTOS);
 
 const fragment = document.createDocumentFragment();
 photos.forEach(function (photo) {
@@ -173,19 +175,16 @@ const effectsPreviews = document.querySelectorAll(`.effects__preview`);
 const setUploadedPhoto = function () {
   imgUploadPreview.src = URL.createObjectURL(uploadFileInput.files[0]);
   effectsPreviews.forEach(function (effectsPreview) {
-    effectsPreview.style.backgroundImage = `url("` + URL.createObjectURL(uploadFileInput.files[0]) + `")`;
+    effectsPreview.style.backgroundImage = `url("${URL.createObjectURL(uploadFileInput.files[0])}")`;
   });
 };
-
-const ecsIgnoringInput = document.querySelector(`input[name="hashtags"]`);
-const ecsIgnoringTextarea = document.querySelector(`textarea[name="description"]`);
 
 /**
  * Закрывает форму редактирования фото при нажатии кнопки Esc
  * @param {event} evt - событие
  */
 const onUploadFormEscPress = function (evt) {
-  if (evt.key === `Escape` && document.activeElement !== ecsIgnoringInput && document.activeElement !== ecsIgnoringTextarea) {
+  if (evt.key === `Escape`) {
     evt.preventDefault();
     closeUploadForm();
   }
@@ -218,14 +217,6 @@ const closeUploadForm = function () {
   document.removeEventListener(`keydown`, onUploadFormEscPress);
 };
 
-uploadFileInput.addEventListener(`change`, function () {
-  openUploadForm();
-});
-
-uploadCancelBtn.addEventListener(`click`, function () {
-  closeUploadForm();
-});
-
 // module4-task1 Изменение интенсивности эффекта, примененного к фотографии
 
 /**
@@ -243,52 +234,62 @@ const getCoords = function (elem) {
 };
 
 const effectToFilter = {
-  'chrome': `grayscale`,
-  'sepia': `sepia`,
-  'marvin': `invert`,
-  'phobos': `blur`,
-  'heat': `brightness`
+  chrome: `grayscale`,
+  sepia: `sepia`,
+  marvin: `invert`,
+  phobos: `blur`,
+  heat: `brightness`
 };
 
 const filterMinMax = {
-  'grayscale': {
+  grayscale: {
     MIN: 0,
     MAX: 1
   },
-  'sepia': {
+  sepia: {
     MIN: 0,
     MAX: 1
   },
-  'invert': {
+  invert: {
     MIN: 0,
     MAX: 100,
     UNIT: `%`
   },
-  'blur': {
+  blur: {
     MIN: 0,
     MAX: 3,
     UNIT: `px`
   },
-  'brightness': {
+  brightness: {
     MIN: 1,
     MAX: 3
   }
 };
 
 /**
- * Меняет интенсивность эффекта, примененного к фотографии, при перемещении ползунка
+ * Устанавливает интенсивность эффекта, примененного к фотографии, при перемещении ползунка
  * @param {number} level - интенсивность эффекта
  */
-const changeEffectLevel = function (level) {
-  let effectApplied = document.querySelector(`.effects__radio:checked`).value;
-  let filterApplied = effectToFilter[effectApplied];
-  let filterMin = filterMinMax[filterApplied].MIN;
-  let filterMax = filterMinMax[filterApplied].MAX;
+const setEffectLevel = function (level) {
+  const effectApplied = document.querySelector(`.effects__radio:checked`).value;
+  const filterApplied = effectToFilter[effectApplied];
+  const filterMin = filterMinMax[filterApplied].MIN;
+  const filterMax = filterMinMax[filterApplied].MAX;
   let filterUnit = ``;
   if (filterMinMax[filterApplied].UNIT) {
     filterUnit = filterMinMax[filterApplied].UNIT;
   }
-  imgUploadPreview.style.filter = filterApplied + `(` + (filterMin + (filterMax - filterMin) * level) + filterUnit + `)`;
+  imgUploadPreview.style.filter = filterApplied + `(${filterMin + (filterMax - filterMin) * level + filterUnit})`;
+};
+
+/**
+ * Устанавливает стили ползунка и значение интенсивности эффекта
+ * @param {number} factor - коэффициент интенсивности эффекта
+ */
+const setPinStyles = function (factor) {
+  effectLevelPin.style.left = defaultSettings.EFFECT_LEVEL * factor + `%`;
+  effectLevelDepth.style.width = defaultSettings.EFFECT_LEVEL * factor + `%`;
+  effectLevelValue.value = defaultSettings.EFFECT_LEVEL * factor;
 };
 
 // Перемещение ползунка
@@ -299,24 +300,20 @@ const effectLevelLine = effectLevel.querySelector(`.effect-level__line`);
 const effectLevelDepth = effectLevel.querySelector(`.effect-level__depth`);
 const effectLevelValue = effectLevel.querySelector(`.effect-level__value`);
 
-effectLevelPin.addEventListener(`mousedown`, function (evt) {
-  let pinXCoord = evt.clientX;
-  let lineXCoord = getCoords(effectLevelLine).left;
-  let deltaX = pinXCoord - lineXCoord;
-  let deltaXMax = effectLevelLine.offsetWidth;
+effectLevelPin.addEventListener(`mousedown`, function () {
+  const lineXCoord = getCoords(effectLevelLine).left;
+  const deltaXMax = effectLevelLine.offsetWidth;
 
   const onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
 
-    pinXCoord = moveEvt.clientX;
-    deltaX = pinXCoord - lineXCoord;
+    const pinXCoord = moveEvt.clientX;
+    const deltaX = pinXCoord - lineXCoord;
 
     if (deltaX >= 0 && deltaX <= deltaXMax) {
-      let effectLevelCoeff = (deltaX / deltaXMax).toFixed(2);
-      effectLevelPin.style.left = effectLevelCoeff * 100 + `%`;
-      effectLevelDepth.style.width = effectLevelCoeff * 100 + `%`;
-      effectLevelValue.value = effectLevelCoeff * 100;
-      changeEffectLevel(effectLevelCoeff);
+      const effectLevelFactor = (deltaX / deltaXMax).toFixed(2);
+      setEffectLevel(effectLevelFactor);
+      setPinStyles(effectLevelFactor);
     }
   };
 
@@ -333,15 +330,18 @@ effectLevelPin.addEventListener(`mousedown`, function (evt) {
 
 // module4-task1 Наложение фильтра на изображение
 
-const effectsRadioBtns = document.querySelectorAll(`.effects__radio`);
+const defaultSettings = {
+  EFFECT: `none`,
+  EFFECT_LEVEL: 100,
+  FACTOR: 1
+};
+
+const effects = document.querySelector(`.effects`);
 
 /**
- * Cбрасывает стили ползука, фотографии на превью и значение интенсивности эффекта
+ * Cбрасывает фильтр фотографии
  */
 const resetEffect = function () {
-  effectLevelPin.style.left = ``;
-  effectLevelDepth.style.width = ``;
-  effectLevelValue.value = ``;
   imgUploadPreview.style.filter = ``;
 };
 
@@ -358,12 +358,11 @@ const applyEffect = function (effect) {
   }
 };
 
-effectsRadioBtns.forEach(function (effectsRadioBtn) {
-  effectsRadioBtn.addEventListener(`click`, function (evt) {
-    let effect = evt.target.value;
-    resetEffect();
-    applyEffect(effect);
-  });
+effects.addEventListener(`click`, function (evt) {
+  const effect = evt.target.value;
+  resetEffect();
+  setPinStyles(defaultSettings.FACTOR);
+  applyEffect(effect);
 });
 
 // module4-task1 Изменение масштаба preview фотографии
@@ -378,44 +377,30 @@ const scaleControlSmaller = document.querySelector(`.scale__control--smaller`);
 const scaleControlBigger = document.querySelector(`.scale__control--bigger`);
 const scaleControlValue = document.querySelector(`.scale__control--value`);
 
-/**
- * Уменьшает масштаб изображения на превью
- * @param {number} scaleMin - мин. масштаб в %
- * @param {number} stepDown - шаг уменьшения масштаба в %
- */
-const scaleDown = function (scaleMin, stepDown) {
-  let scale = parseFloat(scaleControlValue.value);
-  if (scale >= scaleMin + stepDown) {
-    scale -= stepDown;
-  } else {
-    scale = scaleMin;
-  }
-  imgUploadPreview.style.transform = `scale(` + scale / 100 + `)`;
-  scaleControlValue.value = scale + `%`;
+const resetScale = function () {
+  imgUploadPreview.style.transform = ``;
+  scaleControlValue.value = ``;
 };
 
-/**
- * Увеличивает масштаб изображения на превью
- * @param {number} scaleMax - макс. масштаб в %
- * @param {number} stepUp - шаг увеличения масштаба в %
- */
-const scaleUp = function (scaleMax, stepUp) {
+const changeScale = function (scaleMin, scaleMax, step) {
   let scale = parseFloat(scaleControlValue.value);
-  if (scale <= scaleMax - stepUp) {
-    scale += stepUp;
-  } else {
+  if (scale < scaleMin - step) {
+    scale = scaleMin;
+  } else if (scale > scaleMax - step) {
     scale = scaleMax;
+  } else {
+    scale += step;
   }
-  imgUploadPreview.style.transform = `scale(` + scale / 100 + `)`;
+  imgUploadPreview.style.transform = `scale(${scale / 100})`;
   scaleControlValue.value = scale + `%`;
 };
 
 scaleControlSmaller.addEventListener(`click`, function () {
-  scaleDown(Scale.MIN, Scale.STEP);
+  changeScale(Scale.MIN, Scale.MAX, -Scale.STEP);
 });
 
 scaleControlBigger.addEventListener(`click`, function () {
-  scaleUp(Scale.MAX, Scale.STEP);
+  changeScale(Scale.MIN, Scale.MAX, Scale.STEP);
 });
 
 // module4-task1 Валидация хештегов
@@ -431,10 +416,11 @@ const textHashtagsInput = document.querySelector(`.text__hashtags`);
  * Выводит сообщение о превышении допустимого количества хэштегов
  * @param {Array} array - массив
  */
-const checkNumberOfElements = function (array) {
+const checkArrayLength = function (array) {
   if (array.length > HASHTAGS_MAXNUMBER) {
     textHashtagsInput.setCustomValidity(`Слишком много хэштегов!`);
-    // console.log(`Слишком много хэштегов!`);
+  } else {
+    textHashtagsInput.setCustomValidity(``);
   }
 };
 
@@ -444,43 +430,76 @@ const checkNumberOfElements = function (array) {
  */
 const checkDuplicates = function (array) {
   let yesDuplicates = false;
-  let arrayUppercase = array.map(function (element) {
+  const arrayUppercase = array.map(function (element) {
     return element.toUpperCase();
   });
-  let arrayOfUniques = new Set(arrayUppercase);
+  const arrayOfUniques = new Set(arrayUppercase);
   if (arrayOfUniques.size !== array.length) {
     yesDuplicates = true;
   }
   if (yesDuplicates) {
     textHashtagsInput.setCustomValidity(`Есть повторяющиеся хэштеги!`);
-    // console.log(`Есть повторяющиеся хэштеги!`);
   } else {
     textHashtagsInput.setCustomValidity(``);
   }
 };
 
 /**
- * Выводит сообщение в случае превышения длины хэштега или использования в хэштеге недопустимых символов
- * @param {string} hashtag - элемент массива (хэштег)
+ * Выводит сообщение в случае использования хотя бы в одном хэштеге недопустимых символов
+ * @param {Array} array - массив хэштегов
  */
-const checkHashtagValidity = function (hashtag) {
-  if (!re.test(hashtag)) {
+const checkHashtagsValidity = function (array) {
+  const invalid = array.some((elem) => !re.test(elem));
+  if (invalid) {
     textHashtagsInput.setCustomValidity(`Хэштег должен состоять только из букв, чисел и нижнего подчеркивания!`);
-    // console.log(`Хэштег должен состоять только из букв, чисел и нижнего подчеркивания!`);
-  } else if (hashtag.length > HASHTAG_MAXLENGTH) {
-    textHashtagsInput.setCustomValidity(`Слишком длинный хэштег!`);
-    // console.log(`Слишком длинный хэштег!`);
   } else {
     textHashtagsInput.setCustomValidity(``);
   }
 };
 
+/**
+ * Выводит сообщение в случае превышения длины хотя бы одного хэштега
+ * @param {Array} array - массив хэштегов
+ */
+const checkHashtagsLength = function (array) {
+  const tooLong = array.some((elem) => elem.length > HASHTAG_MAXLENGTH);
+  if (tooLong) {
+    textHashtagsInput.setCustomValidity(`Максимальная длина хэштега - ` + HASHTAG_MAXLENGTH);
+  } else {
+    textHashtagsInput.setCustomValidity(``);
+  }
+};
+
+const checkFunctions = [checkDuplicates, checkArrayLength, checkHashtagsLength, checkHashtagsValidity];
+
 textHashtagsInput.addEventListener(`input`, function () {
-  let hashtags = textHashtagsInput.value.split(` `);
-  hashtags.forEach(function (tag) {
-    checkHashtagValidity(tag);
-  });
-  checkDuplicates(hashtags);
-  checkNumberOfElements(hashtags);
-  // console.log(hashtags);
+  const hashtags = textHashtagsInput.value.trim().split(` `);
+  for (let i = 0; i < checkFunctions.length; i++) {
+    checkFunctions[i](hashtags);
+    if (textHashtagsInput.validationMessage) {
+      return;
+    }
+  }
+});
+
+uploadFileInput.addEventListener(`change`, function () {
+  openUploadForm();
+  setPinStyles(defaultSettings.FACTOR);
+  applyEffect(defaultSettings.EFFECT);
+});
+
+uploadCancelBtn.addEventListener(`click`, function () {
+  closeUploadForm();
+  resetScale();
+  resetEffect();
+});
+
+const imgUploadText = document.querySelector(`.img-upload__text`);
+
+imgUploadText.addEventListener(`focusin`, function () {
+  document.removeEventListener(`keydown`, onUploadFormEscPress);
+});
+
+imgUploadText.addEventListener(`focusout`, function () {
+  document.addEventListener(`keydown`, onUploadFormEscPress);
 });

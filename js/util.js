@@ -8,6 +8,13 @@
     }
   };
 
+  const isEnterEvent = (evt, action) => {
+    if (evt.key === `Enter`) {
+      evt.preventDefault();
+      action();
+    }
+  };
+
   /**
    * "Подбрасывает монетку" - возвращает случайное булевое значение
    * @return {boolean} - случайное булевое значение
@@ -64,6 +71,7 @@
 
   window.util = {
     isEscEvent,
+    isEnterEvent,
     getRandomBoolean,
     shuffleArray,
     getRandomNumber,

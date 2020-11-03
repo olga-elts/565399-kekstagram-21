@@ -1,12 +1,7 @@
 'use strict';
 
 (function () {
-  const {shuffleArray} = window.util;
-  const {
-    NUMBER_PHOTOS,
-    getPhotosSrcs,
-    getPhotos
-  } = window.data;
+  const {photos} = window.data;
 
   const pictureTemplate = document.querySelector(`#picture`).content.querySelector(`.picture`);
 
@@ -24,11 +19,6 @@
 
     return photo;
   };
-
-  const photosSrcs = getPhotosSrcs(NUMBER_PHOTOS);
-  shuffleArray(photosSrcs);
-
-  const photos = getPhotos(NUMBER_PHOTOS, photosSrcs);
 
   const fragment = document.createDocumentFragment();
   photos.forEach(function (photo) {

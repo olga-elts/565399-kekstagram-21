@@ -1,8 +1,10 @@
 'use strict';
 
+const {getCoords} = window.util;
 const {
-  getCoords
-} = window.util;
+  onPictureClick,
+  onPictureEnterPress
+} = window.preview;
 const {
   onUploadFormEscPress,
   openUploadForm,
@@ -24,6 +26,12 @@ const {
   checkHashtagsValidity,
   checkHashtagsLength
 } = window.validation;
+
+// Превеью
+
+const picturesContainer = document.querySelector(`.pictures`);
+picturesContainer.addEventListener(`click`, onPictureClick);
+picturesContainer.addEventListener(`keydown`, onPictureEnterPress);
 
 // Перемещение ползунка
 const effectLevel = document.querySelector(`.effect-level`);

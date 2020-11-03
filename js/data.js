@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  const {getRandomBoolean, getRandomElement, getRandomNumber} = window.util;
+  const {shuffleArray, getRandomBoolean, getRandomElement, getRandomNumber} = window.util;
 
   const NAMES = [
     `Турецкий`,
@@ -39,7 +39,6 @@
 
   const NUMBER_PHOTOS = 25;
 
-
   const NumberLikes = {
     MIN: 15,
     MAX: 200
@@ -68,13 +67,16 @@
     return photosSrcs;
   };
 
+  const photosSrcs = getPhotosSrcs(NUMBER_PHOTOS);
+  shuffleArray(photosSrcs);
+
   /**
    * Генерирует массив объектов, каждый объект ‐ рандомное описание фотографии (url, описание, количество лайков, комментарии)
    * @param {number} photosNumber - количество фотографий
    * @param {array} photosSrcs - массив src фотографий
    * @return {Array} - массив объектов (фотографий)
    */
-  const getPhotos = function (photosNumber, photosSrcs) {
+  const getPhotos = function (photosNumber) {
     const photos = [];
     for (let i = 0; i < photosNumber; i++) {
       const photo = {
@@ -98,9 +100,10 @@
     }
     return photos;
   };
+
+  const photos = getPhotos(NUMBER_PHOTOS);
+
   window.data = {
-    NUMBER_PHOTOS,
-    getPhotosSrcs,
-    getPhotos
+    photos
   };
 })();

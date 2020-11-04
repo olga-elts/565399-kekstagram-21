@@ -2,10 +2,6 @@
 
 const {getCoords} = window.util;
 const {
-  onPictureClick,
-  onPictureEnterPress
-} = window.preview;
-const {
   onUploadFormEscPress,
   openUploadForm,
   closeUploadForm
@@ -26,12 +22,6 @@ const {
   checkHashtagsValidity,
   checkHashtagsLength
 } = window.validation;
-
-// Превеью
-
-const picturesContainer = document.querySelector(`.pictures`);
-picturesContainer.addEventListener(`click`, onPictureClick);
-picturesContainer.addEventListener(`keydown`, onPictureEnterPress);
 
 // Перемещение ползунка
 const effectLevel = document.querySelector(`.effect-level`);
@@ -101,7 +91,7 @@ textHashtagsInput.addEventListener(`input`, function () {
   for (let i = 0; i < checkFunctions.length; i++) {
     checkFunctions[i](hashtags);
     if (textHashtagsInput.validationMessage) {
-      return;
+      break;
     }
   }
 });

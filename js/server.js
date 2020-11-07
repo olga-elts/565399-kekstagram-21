@@ -1,7 +1,13 @@
 'use strict';
 (function () {
-  const LOAD_URL = `https://21.javascript.pages.academy/kekstagram/data`;
-  const UPLOAD_URL = `https://21.javascript.pages.academy/kekstagram`;
+  const load = {
+    METHOD: `GET`,
+    URL: `https://21.javascript.pages.academy/kekstagram/data`
+  };
+  const upload = {
+    METHOD: `POST`,
+    URL: `https://21.javascript.pages.academy/kekstagram`
+  };
   const xhrDefault = {
     RESPONSE_TYPE: `json`,
     TIMEOUT: 3000
@@ -52,26 +58,8 @@
     return xhr;
   };
 
-  const load = function (onSuccess) {
-    const xhr = makeXhr(`GET`, LOAD_URL);
-
-    xhr.addEventListener(`load`, function () {
-      ifLoadFunction(xhr, onSuccess, onError);
-    });
-
-    xhr.addEventListener(`error`, function () {
-      onError(eventToMessage.error);
-    });
-
-    xhr.addEventListener(`timeout`, function () {
-      onError(eventToMessage.timeout);
-    });
-
-    xhr.send();
-  };
-
-  const upload = function (data, onSuccess) {
-    const xhr = makeXhr(`POST`, UPLOAD_URL);
+  const sendRequest = function (type, onSuccess, data) {
+    const xhr = makeXhr(type.METHOD, type.URL);
 
     xhr.addEventListener(`load`, function () {
       ifLoadFunction(xhr, onSuccess, onError);
@@ -90,6 +78,7 @@
 
   window.server = {
     load,
-    upload
+    upload,
+    sendRequest
   };
 })();

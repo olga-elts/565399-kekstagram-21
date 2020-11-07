@@ -24,8 +24,8 @@
     timeout: `Запрос не успел выполниться`
   };
 
-  const onError = function (message) {
-    console.error(message);
+  const onError = function (/* message */) {
+    // console.error(message);
   };
 
   const ifLoadFunction = function (xhr, onSuccess) {

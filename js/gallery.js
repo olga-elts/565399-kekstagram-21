@@ -1,9 +1,9 @@
 'use strict';
 
 (function () {
-  const {photos} = window.data;
   const {isEnterEvent} = window.util;
-  const {renderPreview, openPreview} = window.preview;
+  const {load} = window.server;
+  const {openBigPicture} = window.preview;
 
   const pictureTemplate = document.querySelector(`#picture`).content.querySelector(`.picture`);
 
@@ -20,12 +20,10 @@
     photo.querySelector(`.picture__likes`).textContent = photoData.likes;
 
     photo.addEventListener(`click`, function () {
-      renderPreview(photoData);
-      openPreview();
+      openBigPicture(photoData);
     });
     photo.addEventListener(`keydown`, function (evt) {
-      isEnterEvent(evt, renderPreview, photoData);
-      isEnterEvent(evt, openPreview);
+      isEnterEvent(evt, openBigPicture.bind(null, photoData));
     });
 
     return photo;
@@ -41,5 +39,5 @@
     picturesContainer.appendChild(fragment);
   };
 
-  renderPhotos(photos);
+  load(renderPhotos, function () {});
 })();

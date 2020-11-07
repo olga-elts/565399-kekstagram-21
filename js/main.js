@@ -1,6 +1,7 @@
 'use strict';
 
 const {getCoords} = window.util;
+const {upload} = window.server;
 const {
   onUploadFormEscPress,
   openUploadForm,
@@ -120,4 +121,10 @@ imgUploadText.addEventListener(`focusin`, function () {
 
 imgUploadText.addEventListener(`focusout`, function () {
   document.addEventListener(`keydown`, onUploadFormEscPress);
+});
+
+const form = document.querySelector(`.img-upload__form`);
+form.addEventListener(`submit`, function (evt) {
+  upload(new FormData(form), closeUploadForm);
+  evt.preventDefault();
 });

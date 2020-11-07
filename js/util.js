@@ -8,10 +8,10 @@
     }
   };
 
-  const isEnterEvent = (evt, action, argument) => {
+  const isEnterEvent = (evt, action) => {
     if (evt.key === `Enter`) {
       evt.preventDefault();
-      action(argument);
+      action();
     }
   };
 

@@ -7,7 +7,7 @@
   const uploadFileInput = document.querySelector(`#upload-file`);
   const effectsPreviews = document.querySelectorAll(`.effects__preview`);
   const body = document.querySelector(`body`);
-  const imgUploadForm = document.querySelector(`.img-upload__overlay`);
+  const imgUploadOverlay = document.querySelector(`.img-upload__overlay`);
   /**
    * Заменяет дефолтную картинку превью и эффектов на загруженную
    */
@@ -31,7 +31,7 @@
    * @param {event} evt - событие
    */
   const openUploadForm = function () {
-    imgUploadForm.classList.remove(`hidden`);
+    imgUploadOverlay.classList.remove(`hidden`);
     body.classList.add(`modal-open`);
     setUploadedPhoto();
     document.addEventListener(`keydown`, onUploadFormEscPress);
@@ -43,7 +43,7 @@
    */
   const closeUploadForm = function () {
     uploadFileInput.value = ``;
-    imgUploadForm.classList.add(`hidden`);
+    imgUploadOverlay.classList.add(`hidden`);
     body.classList.remove(`modal-open`);
     document.removeEventListener(`keydown`, onUploadFormEscPress);
   };

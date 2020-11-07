@@ -40,6 +40,11 @@
     bigPictureCancelBtn.addEventListener(`click`, closePreview);
   };
 
+  const openBigPicture = function (previewData) {
+    renderPreview(previewData);
+    openPreview();
+  };
+
   /**
    * Закрывает превью, удаляет слушитель события keydown и слушатель клика на кнопку закрытия
    * @param {event} evt - событие
@@ -60,7 +65,6 @@
   };
 
   window.preview = {
-    renderPreview,
-    openPreview
+    openBigPicture
   };
 })();

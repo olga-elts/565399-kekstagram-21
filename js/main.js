@@ -1,10 +1,7 @@
 'use strict';
 
 const {getCoords} = window.util;
-const {
-  onPictureClick,
-  onPictureEnterPress
-} = window.preview;
+const {upload, sendRequest} = window.server;
 const {
   onUploadFormEscPress,
   openUploadForm,
@@ -17,7 +14,6 @@ const {
   setPinStyles,
   resetEffect,
   applyEffect,
-  resetScale,
   changeScale
 } = window.editing;
 const {
@@ -26,12 +22,6 @@ const {
   checkHashtagsValidity,
   checkHashtagsLength
 } = window.validation;
-
-// Превеью
-
-const picturesContainer = document.querySelector(`.pictures`);
-picturesContainer.addEventListener(`click`, onPictureClick);
-picturesContainer.addEventListener(`keydown`, onPictureEnterPress);
 
 // Перемещение ползунка
 const effectLevel = document.querySelector(`.effect-level`);
@@ -101,25 +91,29 @@ textHashtagsInput.addEventListener(`input`, function () {
   for (let i = 0; i < checkFunctions.length; i++) {
     checkFunctions[i](hashtags);
     if (textHashtagsInput.validationMessage) {
-      return;
+      textHashtagsInput.style.outline = `1px auto red`;
+      break;
+    } else {
+      textHashtagsInput.style.outline = ``;
     }
   }
 });
 
 const uploadFileInput = document.querySelector(`#upload-file`);
+const effectsInputDefault = document.querySelector(`.effects__radio[value=none]`);
 
 uploadFileInput.addEventListener(`change`, function () {
   openUploadForm();
+  resetEffect();
   setPinStyles(defaultSettings.FACTOR);
   applyEffect(defaultSettings.EFFECT);
+  effectsInputDefault.click();
 });
 
 const uploadCancelBtn = document.querySelector(`#upload-cancel`);
 
 uploadCancelBtn.addEventListener(`click`, function () {
   closeUploadForm();
-  resetScale();
-  resetEffect();
 });
 
 const imgUploadText = document.querySelector(`.img-upload__text`);
@@ -130,4 +124,10 @@ imgUploadText.addEventListener(`focusin`, function () {
 
 imgUploadText.addEventListener(`focusout`, function () {
   document.addEventListener(`keydown`, onUploadFormEscPress);
+});
+
+const form = document.querySelector(`.img-upload__form`);
+form.addEventListener(`submit`, function (evt) {
+  sendRequest(upload, closeUploadForm, new FormData(form));
+  evt.preventDefault();
 });

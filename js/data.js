@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  const {shuffleArray, getRandomBoolean, getRandomElement, getRandomNumber} = window.util;
-
   const NAMES = [
     `Турецкий`,
     `Томми`,
@@ -55,6 +53,46 @@
   };
 
   /**
+   * "Подбрасывает монетку" - возвращает случайное булевое значение
+   * @return {boolean} - случайное булевое значение
+   */
+  const getRandomBoolean = function () {
+    return Math.random() >= 0.5;
+  };
+
+  /**
+   * Перемешивает массив
+   * @param {Array} array -  случайный массив
+   */
+  const shuffleArray = function (array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[j], array[i]] = [array[i], array[j]];
+    }
+  };
+
+  /**
+   * Возвращает рандомное целое число между задаваемыми min и max
+   * @param {number} min - минимальное число
+   * @param {number} max - максимальное число
+   * @return {number} - случайное число
+   */
+  const getRandomNumber = function (min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  /**
+   * Выбирает рандомный элемент из массива
+   * @param {Array} array -  случайный массив
+   * @return {*} - случайный элемент массива
+   */
+  const getRandomElement = function (array) {
+    return array[Math.floor(Math.random() * Math.floor(array.length))];
+  };
+
+  /**
    * Генерирует массив url фотографий
    * @param {number} numberUrls - количество url фотографий
    * @return {Array} - массив url фотографий
@@ -73,7 +111,6 @@
   /**
    * Генерирует массив объектов, каждый объект ‐ рандомное описание фотографии (url, описание, количество лайков, комментарии)
    * @param {number} photosNumber - количество фотографий
-   * @param {array} photosSrcs - массив src фотографий
    * @return {Array} - массив объектов (фотографий)
    */
   const getPhotos = function (photosNumber) {

@@ -2,7 +2,7 @@
 
 (function () {
   const {isEnterEvent} = window.util;
-  const {load, sendRequest} = window.server;
+  const {load, showErrorBlock, sendRequest} = window.server;
   const {openBigPicture} = window.preview;
 
   const pictureTemplate = document.querySelector(`#picture`).content.querySelector(`.picture`);
@@ -39,5 +39,5 @@
     picturesContainer.appendChild(fragment);
   };
 
-  sendRequest(load, renderPhotos);
+  sendRequest(load, renderPhotos, showErrorBlock);
 })();

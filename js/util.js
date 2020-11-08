@@ -1,6 +1,13 @@
 'use strict';
 
 (function () {
+
+  const isEventAtTarget = (evt, action) => {
+    if (evt.eventPhase === 2) {
+      action();
+    }
+  };
+
   const isEscEvent = (evt, action) => {
     if (evt.key === `Escape`) {
       evt.preventDefault();
@@ -30,6 +37,7 @@
   };
 
   window.util = {
+    isEventAtTarget,
     isEscEvent,
     isEnterEvent,
     getCoords

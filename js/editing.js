@@ -43,7 +43,8 @@
   const Scale = {
     STEP: 25,
     MAX: 100,
-    MIN: 25
+    MIN: 25,
+    UNIT: `%`
   };
 
   const imgUploadPreview = document.querySelector(`.img-upload__preview img`);
@@ -83,6 +84,7 @@
    */
   const resetEffect = function () {
     imgUploadPreview.style.filter = ``;
+    imgUploadPreview.className = ``;
   };
 
   /**
@@ -91,7 +93,6 @@
    */
   const applyEffect = function (effect) {
     effectLevel.classList.remove(`hidden`);
-    imgUploadPreview.className = ``;
     imgUploadPreview.classList.add(`effects__preview--` + effect);
     if (effect === `none`) {
       effectLevel.classList.add(`hidden`);
@@ -100,7 +101,7 @@
 
   const resetScale = function () {
     imgUploadPreview.style.transform = ``;
-    scaleControlValue.value = ``;
+    scaleControlValue.value = Scale.MAX + Scale.UNIT;
   };
 
   const changeScale = function (scaleMin, scaleMax, step) {

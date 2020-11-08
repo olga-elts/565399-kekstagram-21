@@ -14,7 +14,6 @@ const {
   setPinStyles,
   resetEffect,
   applyEffect,
-  resetScale,
   changeScale
 } = window.editing;
 const {
@@ -92,25 +91,29 @@ textHashtagsInput.addEventListener(`input`, function () {
   for (let i = 0; i < checkFunctions.length; i++) {
     checkFunctions[i](hashtags);
     if (textHashtagsInput.validationMessage) {
+      textHashtagsInput.style.outline = `1px auto red`;
       break;
+    } else {
+      textHashtagsInput.style.outline = ``;
     }
   }
 });
 
 const uploadFileInput = document.querySelector(`#upload-file`);
+const effectsInputDefault = document.querySelector(`.effects__radio[value=none]`);
 
 uploadFileInput.addEventListener(`change`, function () {
   openUploadForm();
+  resetEffect();
   setPinStyles(defaultSettings.FACTOR);
   applyEffect(defaultSettings.EFFECT);
+  effectsInputDefault.click();
 });
 
 const uploadCancelBtn = document.querySelector(`#upload-cancel`);
 
 uploadCancelBtn.addEventListener(`click`, function () {
   closeUploadForm();
-  resetScale();
-  resetEffect();
 });
 
 const imgUploadText = document.querySelector(`.img-upload__text`);

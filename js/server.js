@@ -1,5 +1,6 @@
 'use strict';
 (function () {
+  const {isEscEvent} = window.util;
   const load = {
     METHOD: `GET`,
     URL: `https://21.javascript.pages.academy/kekstagram/data`
@@ -30,8 +31,40 @@
     timeout: `Запрос не успел выполниться`
   };
 
-  const onError = function (/* message */) {
-    // console.error(message);
+  const mainSection = document.querySelector(`main`);
+  const errorBlock = document.querySelector(`#error`).content.querySelector(`.error`).cloneNode(true);
+  const errorBlockInner = errorBlock.querySelector(`.error__inner`);
+  const errorButton = errorBlockInner.querySelector(`.error__button`);
+
+  const renderErrorBlock = function () {
+    mainSection.appendChild(errorBlock);
+    errorBlock.classList.add(`hidden`);
+    errorBlock.style.zIndex = `5`;
+  };
+
+  renderErrorBlock();
+
+  const closeErrorBlock = function (evt) {
+    if (evt.type === `click` && evt.target === errorBlockInner && evt.target !== errorButton) {
+      return;
+    } else {
+      errorBlock.classList.add(`hidden`);
+      errorButton.removeEventListener(`click`, closeErrorBlock);
+      document.removeEventListener(`keydown`, onErrorBlockEscPress);
+      document.removeEventListener(`click`, closeErrorBlock);
+    }
+  };
+
+  const onErrorBlockEscPress = function (evt) {
+    isEscEvent(evt, closeErrorBlock.bind(null, evt));
+  };
+
+  const onError = function (message) {
+    errorBlock.classList.remove(`hidden`);
+    errorBlock.querySelector(`.error__title`).textContent = message;
+    errorButton.addEventListener(`click`, closeErrorBlock);
+    document.addEventListener(`keydown`, onErrorBlockEscPress);
+    document.addEventListener(`click`, closeErrorBlock);
   };
 
   const ifLoadFunction = function (xhr, onSuccess) {

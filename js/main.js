@@ -1,7 +1,9 @@
 'use strict';
 
 const {getCoords} = window.util;
-const {upload, showErrorBlock, showSuccessBlock, sendRequest} = window.server;
+const {renderPhotos} = window.gallery;
+const {load, upload, showErrorBlock, showSuccessBlock, sendRequest} = window.server;
+const {showImgFilters, filterPhotos} = window.filter;
 const {
   onUploadFormEscPress,
   openUploadForm,
@@ -130,4 +132,19 @@ form.addEventListener(`submit`, function (evt) {
   sendRequest(upload, showSuccessBlock, showErrorBlock, new FormData(form));
   closeUploadForm();
   evt.preventDefault();
+});
+
+let loadedPhotos;
+
+const successHandler = function (data) {
+  loadedPhotos = data;
+  renderPhotos(loadedPhotos);
+  showImgFilters();
+};
+
+sendRequest(load, successHandler, showErrorBlock);
+
+const imgFilters = document.querySelector(`.img-filters`);
+imgFilters.addEventListener(`click`, function (evt) {
+  filterPhotos(evt, loadedPhotos);
 });

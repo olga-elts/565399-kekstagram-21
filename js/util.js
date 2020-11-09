@@ -36,10 +36,24 @@
     };
   };
 
+  /**
+   * Перемешивает массив
+   * @param {Array} array -  случайный массив
+   * @return {Array} - перемешанный массив
+   */
+  const getshuffledArray = function (array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[j], array[i]] = [array[i], array[j]];
+    }
+    return array;
+  };
+
   window.util = {
     isEventAtTarget,
     isEscEvent,
     isEnterEvent,
-    getCoords
+    getCoords,
+    getshuffledArray
   };
 })();

@@ -1,7 +1,9 @@
 'use strict';
 
 const {getCoords} = window.util;
-const {upload, sendRequest} = window.server;
+const {renderPhotos} = window.gallery;
+const {load, upload, showErrorBlock, showSuccessBlock, sendRequest} = window.server;
+const {showImgFilters, filterPhotos} = window.filter;
 const {
   onUploadFormEscPress,
   openUploadForm,
@@ -100,14 +102,12 @@ textHashtagsInput.addEventListener(`input`, function () {
 });
 
 const uploadFileInput = document.querySelector(`#upload-file`);
-const effectsInputDefault = document.querySelector(`.effects__radio[value=none]`);
 
 uploadFileInput.addEventListener(`change`, function () {
   openUploadForm();
   resetEffect();
   setPinStyles(defaultSettings.FACTOR);
   applyEffect(defaultSettings.EFFECT);
-  effectsInputDefault.click();
 });
 
 const uploadCancelBtn = document.querySelector(`#upload-cancel`);
@@ -127,7 +127,24 @@ imgUploadText.addEventListener(`focusout`, function () {
 });
 
 const form = document.querySelector(`.img-upload__form`);
+
 form.addEventListener(`submit`, function (evt) {
-  sendRequest(upload, closeUploadForm, new FormData(form));
+  sendRequest(upload, showSuccessBlock, showErrorBlock, new FormData(form));
+  closeUploadForm();
   evt.preventDefault();
+});
+
+let loadedPhotos;
+
+const successHandler = function (data) {
+  loadedPhotos = data;
+  renderPhotos(loadedPhotos);
+  showImgFilters();
+};
+
+sendRequest(load, successHandler, showErrorBlock);
+
+const imgFilters = document.querySelector(`.img-filters`);
+imgFilters.addEventListener(`click`, function (evt) {
+  filterPhotos(evt, loadedPhotos);
 });

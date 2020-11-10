@@ -2,7 +2,6 @@
 
 (function () {
   const {isEnterEvent} = window.util;
-  const {load, sendRequest} = window.server;
   const {openBigPicture} = window.preview;
 
   const pictureTemplate = document.querySelector(`#picture`).content.querySelector(`.picture`);
@@ -36,8 +35,16 @@
     });
 
     const picturesContainer = document.querySelector(`.pictures`);
+    const existingPhotos = document.querySelectorAll(`.picture`);
+
+    existingPhotos.forEach(function (existingPhoto) {
+      picturesContainer.removeChild(existingPhoto);
+    });
+
     picturesContainer.appendChild(fragment);
   };
 
-  sendRequest(load, renderPhotos);
+  window.gallery = {
+    renderPhotos
+  };
 })();

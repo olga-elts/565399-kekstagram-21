@@ -9,6 +9,7 @@
   const effectsPreviews = document.querySelectorAll(`.effects__preview`);
   const body = document.querySelector(`body`);
   const imgUploadOverlay = document.querySelector(`.img-upload__overlay`);
+  const effectsInputDefault = document.querySelector(`.effects__radio[value=none]`);
   const textHashtagsInput = document.querySelector(`.text__hashtags`);
   const textDescriptionInput = document.querySelector(`.text__description`);
   /**
@@ -25,6 +26,7 @@
     uploadFileInput.value = ``;
     textHashtagsInput.value = ``;
     textDescriptionInput.value = ``;
+    effectsInputDefault.checked = true;
   };
 
   /**

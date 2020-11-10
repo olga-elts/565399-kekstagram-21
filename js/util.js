@@ -1,6 +1,13 @@
 'use strict';
 
 (function () {
+
+  const isEventAtTarget = (evt, action) => {
+    if (evt.eventPhase === 2) {
+      action();
+    }
+  };
+
   const isEscEvent = (evt, action) => {
     if (evt.key === `Escape`) {
       evt.preventDefault();
@@ -29,9 +36,24 @@
     };
   };
 
+  /**
+   * Перемешивает массив
+   * @param {Array} array -  случайный массив
+   * @return {Array} - перемешанный массив
+   */
+  const getshuffledArray = function (array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[j], array[i]] = [array[i], array[j]];
+    }
+    return array;
+  };
+
   window.util = {
+    isEventAtTarget,
     isEscEvent,
     isEnterEvent,
-    getCoords
+    getCoords,
+    getshuffledArray
   };
 })();

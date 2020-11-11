@@ -7,7 +7,7 @@
   const pictureTemplate = document.querySelector(`#picture`).content.querySelector(`.picture`);
 
   /**
-   * Отрисовывает фотографии, используя данные из массива объектов - фотографий
+   * Отрисовывает фотографию, используя данные из объекта - фотографии
    * @param {Object} photoData - объект с данными о фотографии
    * @return {Object} - фрагмент кода HTML
    */
@@ -28,6 +28,10 @@
     return photo;
   };
 
+  /**
+   * Отрисовывает фото на страницу, используя данные из массива объектов - фотографий, удаляет существующие фото в контейнере
+   * @param {array} photosData - массива объектов - фотографий
+   */
   const renderPhotos = function (photosData) {
     const fragment = document.createDocumentFragment();
     photosData.forEach(function (photoData) {

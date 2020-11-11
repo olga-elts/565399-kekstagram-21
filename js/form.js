@@ -4,14 +4,15 @@
   const {isEscEvent} = window.util;
   const {resetEffect, resetScale} = window.editing;
 
+  const body = document.querySelector(`body`);
   const imgUploadPreview = document.querySelector(`.img-upload__preview img`);
   const uploadFileInput = document.querySelector(`#upload-file`);
   const effectsPreviews = document.querySelectorAll(`.effects__preview`);
-  const body = document.querySelector(`body`);
   const imgUploadOverlay = document.querySelector(`.img-upload__overlay`);
   const effectsInputDefault = document.querySelector(`.effects__radio[value=none]`);
   const textHashtagsInput = document.querySelector(`.text__hashtags`);
   const textDescriptionInput = document.querySelector(`.text__description`);
+
   /**
    * Заменяет дефолтную картинку превью и эффектов на загруженную
    */
@@ -22,6 +23,9 @@
     });
   };
 
+  /**
+   * Очищает поля ввода в форме, "чекает" дефолтный эффект (`none`)
+   */
   const cleanInputs = function () {
     uploadFileInput.value = ``;
     textHashtagsInput.value = ``;
@@ -49,7 +53,7 @@
   };
 
   /**
-   * Закрывает форму редактирования, удаляет слушитель события keydown
+   * Закрывает форму редактирования, сбрасывает эффект, масштаб, очищает поля ввода, удаляет слушитель события keydown
    * @param {event} evt - событие
    */
   const closeUploadForm = function () {

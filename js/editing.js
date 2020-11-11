@@ -10,31 +10,31 @@
   };
 
   const filterMinMax = {
-    grayscale: {
+    Grayscale: {
       MIN: 0,
       MAX: 1
     },
-    sepia: {
+    Sepia: {
       MIN: 0,
       MAX: 1
     },
-    invert: {
+    Invert: {
       MIN: 0,
       MAX: 100,
       UNIT: `%`
     },
-    blur: {
+    Blur: {
       MIN: 0,
       MAX: 3,
       UNIT: `px`
     },
-    brightness: {
+    Brightness: {
       MIN: 1,
       MAX: 3
     }
   };
 
-  const defaultSettings = {
+  const DefaultSettings = {
     EFFECT: `none`,
     EFFECT_LEVEL: 100,
     FACTOR: 1
@@ -53,6 +53,18 @@
   const effectLevelDepth = effectLevel.querySelector(`.effect-level__depth`);
   const effectLevelValue = effectLevel.querySelector(`.effect-level__value`);
   const scaleControlValue = document.querySelector(`.scale__control--value`);
+
+  /**
+   * Приводит ключи объекта filterMinMax к нижнему регистру для удобства последующего использования
+   */
+  for (let key in filterMinMax) {
+    if (key) {
+      const filter = key.toLowerCase();
+      filterMinMax[filter] = filterMinMax[key];
+      delete filterMinMax[key];
+    }
+  }
+
   /**
    * Устанавливает интенсивность эффекта, примененного к фотографии, при перемещении ползунка
    * @param {number} level - интенсивность эффекта
@@ -74,9 +86,9 @@
    * @param {number} factor - коэффициент интенсивности эффекта
    */
   const setPinStyles = function (factor) {
-    effectLevelPin.style.left = defaultSettings.EFFECT_LEVEL * factor + `%`;
-    effectLevelDepth.style.width = defaultSettings.EFFECT_LEVEL * factor + `%`;
-    effectLevelValue.value = defaultSettings.EFFECT_LEVEL * factor;
+    effectLevelPin.style.left = DefaultSettings.EFFECT_LEVEL * factor + `%`;
+    effectLevelDepth.style.width = DefaultSettings.EFFECT_LEVEL * factor + `%`;
+    effectLevelValue.value = DefaultSettings.EFFECT_LEVEL * factor;
   };
 
   /**
@@ -99,11 +111,20 @@
     }
   };
 
+  /**
+   * Сбрасывает масштаб
+   */
   const resetScale = function () {
     imgUploadPreview.style.transform = ``;
     scaleControlValue.value = Scale.MAX + Scale.UNIT;
   };
 
+  /**
+   * Сбрасывает масштаб
+   * @param {number} scaleMin - минимальное значение масштаба
+   * @param {number} scaleMax - максимальное значение масштаба
+   * @param {number} step - шаг изменения масштаба
+   */
   const changeScale = function (scaleMin, scaleMax, step) {
     let scale = parseFloat(scaleControlValue.value);
     if (scale < scaleMin - step) {
@@ -118,7 +139,7 @@
   };
 
   window.editing = {
-    defaultSettings,
+    DefaultSettings,
     Scale,
     setEffectLevel,
     setPinStyles,

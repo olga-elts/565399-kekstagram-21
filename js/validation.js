@@ -44,7 +44,9 @@
    * @param {Array} tags - массив хэштегов
    */
   const checkHashtagsValidity = function (tags) {
-    const invalid = tags.some((tag) => !re.test(tag));
+    const invalid = tags.some(function (tag) {
+      return !re.test(tag);
+    });
     if (invalid) {
       textHashtagsInput.setCustomValidity(`Хэштег должен состоять только из букв, чисел и нижнего подчеркивания!`);
     } else {
@@ -57,7 +59,9 @@
    * @param {Array} tags - массив хэштегов
    */
   const checkHashtagsLength = function (tags) {
-    const tooLong = tags.some((tag) => tag.length > HASHTAG_MAXLENGTH);
+    const tooLong = tags.some(function (tag) {
+      return tag.length > HASHTAG_MAXLENGTH;
+    });
     if (tooLong) {
       textHashtagsInput.setCustomValidity(`Максимальная длина хэштега - ` + HASHTAG_MAXLENGTH);
     } else {

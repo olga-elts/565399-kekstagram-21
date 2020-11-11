@@ -1,21 +1,23 @@
 'use strict';
 (function () {
   const {isEventAtTarget, isEscEvent} = window.util;
-  const load = {
+
+  const STATUS_CODE_SUCCESSFULL = 200;
+
+  const Load = {
     METHOD: `GET`,
     URL: `https://21.javascript.pages.academy/kekstagram/data`,
     BUTTON: `Понятно, попробую снова`
   };
-  const upload = {
+  const Upload = {
     METHOD: `POST`,
     URL: `https://21.javascript.pages.academy/kekstagram`,
     BUTTON: `Загрузить другой файл`
   };
-  const xhrDefault = {
+  const XhrDefault = {
     RESPONSE_TYPE: `json`,
     TIMEOUT: 3000
   };
-  const STATUS_CODE_SUCCESSFULL = 200;
 
   const eventToMessage = {
     error: `Ошибка соединения`,
@@ -76,8 +78,8 @@
 
   const makeXhr = function (method, url) {
     const xhr = new XMLHttpRequest();
-    xhr.responseType = xhrDefault.RESPONSE_TYPE;
-    xhr.timeout = xhrDefault.TIMEOUT;
+    xhr.responseType = XhrDefault.RESPONSE_TYPE;
+    xhr.timeout = XhrDefault.TIMEOUT;
 
     xhr.open(method, url);
 
@@ -108,8 +110,8 @@
   };
 
   window.server = {
-    load,
-    upload,
+    Load,
+    Upload,
     showErrorBlock,
     showSuccessBlock,
     sendRequest

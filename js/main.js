@@ -1,150 +1,138 @@
 'use strict';
 
-const {getCoords} = window.util;
-const {renderPhotos} = window.gallery;
-const {load, upload, showErrorBlock, showSuccessBlock, sendRequest} = window.server;
-const {showImgFilters, filterPhotos} = window.filter;
-const {
-  onUploadFormEscPress,
-  openUploadForm,
-  closeUploadForm
-} = window.form;
-const {
-  defaultSettings,
-  Scale,
-  setEffectLevel,
-  setPinStyles,
-  resetEffect,
-  applyEffect,
-  changeScale
-} = window.editing;
-const {
-  checkArrayLength,
-  checkDuplicates,
-  checkHashtagsValidity,
-  checkHashtagsLength
-} = window.validation;
+(function () {
+  const {getCoords} = window.util;
+  const {renderPhotos} = window.gallery;
+  const {Load, Upload, showErrorBlock, showSuccessBlock, sendRequest} = window.server;
+  const {showImgFilters, filterPhotos} = window.filter;
+  const {
+    onUploadFormEscPress,
+    openUploadForm,
+    closeUploadForm
+  } = window.form;
+  const {
+    DefaultSettings,
+    Scale,
+    setEffectLevel,
+    setPinStyles,
+    resetEffect,
+    applyEffect,
+    changeScale
+  } = window.editing;
+  const {
+    checkArrayLength,
+    checkDuplicates,
+    checkHashtagsValidity,
+    checkHashtagsLength
+  } = window.validation;
 
-// Перемещение ползунка
-const effectLevel = document.querySelector(`.effect-level`);
-const effectLevelPin = effectLevel.querySelector(`.effect-level__pin`);
-const effectLevelLine = effectLevel.querySelector(`.effect-level__line`);
+  const uploadFileInput = document.querySelector(`#upload-file`);
+  const form = document.querySelector(`.img-upload__form`);
+  const uploadCancelBtn = document.querySelector(`#upload-cancel`);
+  const scaleControlSmaller = document.querySelector(`.scale__control--smaller`);
+  const scaleControlBigger = document.querySelector(`.scale__control--bigger`);
+  const effects = document.querySelector(`.effects`);
+  const effectLevel = document.querySelector(`.effect-level`);
+  const effectLevelPin = effectLevel.querySelector(`.effect-level__pin`);
+  const effectLevelLine = effectLevel.querySelector(`.effect-level__line`);
+  const imgUploadText = document.querySelector(`.img-upload__text`);
+  const textHashtagsInput = document.querySelector(`.text__hashtags`);
+  const imgFilters = document.querySelector(`.img-filters`);
 
-effectLevelPin.addEventListener(`mousedown`, function () {
-  const lineXCoord = getCoords(effectLevelLine).left;
-  const deltaXMax = effectLevelLine.offsetWidth;
+  const checkFunctions = [checkDuplicates, checkArrayLength, checkHashtagsLength, checkHashtagsValidity];
 
-  const onMouseMove = function (moveEvt) {
-    moveEvt.preventDefault();
+  effectLevelPin.addEventListener(`mousedown`, function () {
+    const lineXCoord = getCoords(effectLevelLine).left;
+    const deltaXMax = effectLevelLine.offsetWidth;
 
-    const pinXCoord = moveEvt.clientX;
-    const deltaX = pinXCoord - lineXCoord;
+    const onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
 
-    if (deltaX >= 0 && deltaX <= deltaXMax) {
-      const effectLevelFactor = (deltaX / deltaXMax).toFixed(2);
-      setEffectLevel(effectLevelFactor);
-      setPinStyles(effectLevelFactor);
+      const pinXCoord = moveEvt.clientX;
+      const deltaX = pinXCoord - lineXCoord;
+
+      if (deltaX >= 0 && deltaX <= deltaXMax) {
+        const effectLevelFactor = (deltaX / deltaXMax).toFixed(2);
+        setEffectLevel(effectLevelFactor);
+        setPinStyles(effectLevelFactor);
+      }
+    };
+
+    const onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener(`mousemove`, onMouseMove);
+      document.removeEventListener(`mouseup`, onMouseUp);
+    };
+
+    document.addEventListener(`mousemove`, onMouseMove);
+    document.addEventListener(`mouseup`, onMouseUp);
+  });
+
+  effects.addEventListener(`click`, function (evt) {
+    const effect = evt.target.value;
+    resetEffect();
+    setPinStyles(DefaultSettings.FACTOR);
+    applyEffect(effect);
+  });
+
+  scaleControlSmaller.addEventListener(`click`, function () {
+    changeScale(Scale.MIN, Scale.MAX, -Scale.STEP);
+  });
+
+  scaleControlBigger.addEventListener(`click`, function () {
+    changeScale(Scale.MIN, Scale.MAX, Scale.STEP);
+  });
+
+  textHashtagsInput.addEventListener(`input`, function () {
+    const hashtags = textHashtagsInput.value.trim().split(` `);
+    for (let i = 0; i < checkFunctions.length; i++) {
+      checkFunctions[i](hashtags);
+      if (textHashtagsInput.validationMessage) {
+        textHashtagsInput.style.outline = `1px auto red`;
+        break;
+      } else {
+        textHashtagsInput.style.outline = ``;
+      }
     }
+  });
+
+  uploadFileInput.addEventListener(`change`, function () {
+    openUploadForm();
+    resetEffect();
+    setPinStyles(DefaultSettings.FACTOR);
+    applyEffect(DefaultSettings.EFFECT);
+  });
+
+  uploadCancelBtn.addEventListener(`click`, function () {
+    closeUploadForm();
+  });
+
+  imgUploadText.addEventListener(`focusin`, function () {
+    document.removeEventListener(`keydown`, onUploadFormEscPress);
+  });
+
+  imgUploadText.addEventListener(`focusout`, function () {
+    document.addEventListener(`keydown`, onUploadFormEscPress);
+  });
+
+  form.addEventListener(`submit`, function (evt) {
+    sendRequest(Upload, showSuccessBlock, showErrorBlock, new FormData(form));
+    closeUploadForm();
+    evt.preventDefault();
+  });
+
+  let loadedPhotos;
+
+  const successHandler = function (data) {
+    loadedPhotos = data;
+    renderPhotos(loadedPhotos);
+    showImgFilters();
   };
 
-  const onMouseUp = function (upEvt) {
-    upEvt.preventDefault();
+  sendRequest(Load, successHandler, showErrorBlock);
 
-    document.removeEventListener(`mousemove`, onMouseMove);
-    document.removeEventListener(`mouseup`, onMouseUp);
-  };
-
-  document.addEventListener(`mousemove`, onMouseMove);
-  document.addEventListener(`mouseup`, onMouseUp);
-});
-
-// module4-task1 Наложение фильтра на изображение
-
-const effects = document.querySelector(`.effects`);
-
-effects.addEventListener(`click`, function (evt) {
-  const effect = evt.target.value;
-  resetEffect();
-  setPinStyles(defaultSettings.FACTOR);
-  applyEffect(effect);
-});
-
-// module4-task1 Изменение масштаба preview фотографии
-
-const scaleControlSmaller = document.querySelector(`.scale__control--smaller`);
-const scaleControlBigger = document.querySelector(`.scale__control--bigger`);
-
-scaleControlSmaller.addEventListener(`click`, function () {
-  changeScale(Scale.MIN, Scale.MAX, -Scale.STEP);
-});
-
-scaleControlBigger.addEventListener(`click`, function () {
-  changeScale(Scale.MIN, Scale.MAX, Scale.STEP);
-});
-
-// module4-task1 Валидация хештегов
-
-const textHashtagsInput = document.querySelector(`.text__hashtags`);
-
-const checkFunctions = [checkDuplicates, checkArrayLength, checkHashtagsLength, checkHashtagsValidity];
-
-textHashtagsInput.addEventListener(`input`, function () {
-  const hashtags = textHashtagsInput.value.trim().split(` `);
-  for (let i = 0; i < checkFunctions.length; i++) {
-    checkFunctions[i](hashtags);
-    if (textHashtagsInput.validationMessage) {
-      textHashtagsInput.style.outline = `1px auto red`;
-      break;
-    } else {
-      textHashtagsInput.style.outline = ``;
-    }
-  }
-});
-
-const uploadFileInput = document.querySelector(`#upload-file`);
-
-uploadFileInput.addEventListener(`change`, function () {
-  openUploadForm();
-  resetEffect();
-  setPinStyles(defaultSettings.FACTOR);
-  applyEffect(defaultSettings.EFFECT);
-});
-
-const uploadCancelBtn = document.querySelector(`#upload-cancel`);
-
-uploadCancelBtn.addEventListener(`click`, function () {
-  closeUploadForm();
-});
-
-const imgUploadText = document.querySelector(`.img-upload__text`);
-
-imgUploadText.addEventListener(`focusin`, function () {
-  document.removeEventListener(`keydown`, onUploadFormEscPress);
-});
-
-imgUploadText.addEventListener(`focusout`, function () {
-  document.addEventListener(`keydown`, onUploadFormEscPress);
-});
-
-const form = document.querySelector(`.img-upload__form`);
-
-form.addEventListener(`submit`, function (evt) {
-  sendRequest(upload, showSuccessBlock, showErrorBlock, new FormData(form));
-  closeUploadForm();
-  evt.preventDefault();
-});
-
-let loadedPhotos;
-
-const successHandler = function (data) {
-  loadedPhotos = data;
-  renderPhotos(loadedPhotos);
-  showImgFilters();
-};
-
-sendRequest(load, successHandler, showErrorBlock);
-
-const imgFilters = document.querySelector(`.img-filters`);
-imgFilters.addEventListener(`click`, function (evt) {
-  filterPhotos(evt, loadedPhotos);
-});
+  imgFilters.addEventListener(`click`, function (evt) {
+    filterPhotos(evt, loadedPhotos);
+  });
+})();

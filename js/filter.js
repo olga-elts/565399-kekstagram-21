@@ -1,16 +1,26 @@
 'use strict';
 
 (function () {
-  const {getshuffledArray} = window.util;
+  const {getshuffledArray, debounce} = window.util;
   const {renderPhotos} = window.gallery;
 
+  const PHOTOS_NUMBER = 10;
+
   const imgFilters = document.querySelector(`.img-filters`);
+
+  /**
+   * Показывает фильтры изображений
+   */
   const showImgFilters = function () {
     imgFilters.classList.remove(`img-filters--inactive`);
   };
 
-  const RANDOM_PHOTOS_NUMBER = 10;
-
+  /**
+   * Возвращает новый или исходный массив данных (объектов фото) в зависимости от применяемого фильтра
+   * @param {event} evt - событие
+   * @param {array} photos - исходный массив данных (объектов фотографий)
+   * @return {array} - новый или исходный массив данных (объектов фотографий)
+   */
   const getFilteredPhotos = function (evt, photos) {
     const filter = evt.target.id;
     switch (filter) {
@@ -21,12 +31,16 @@
         return sortedPhotos;
       case `filter-random`:
         const randomPhotos = getshuffledArray(photos.slice());
-        return randomPhotos.slice(0, RANDOM_PHOTOS_NUMBER);
+        return randomPhotos.slice(0, PHOTOS_NUMBER);
       default:
         return photos;
     }
   };
 
+  /**
+   * Применяет класс active к кнопке - цели события при его наступлении
+   * @param {event} evt - событие
+   */
   const setButtonsClassNames = function (evt) {
     const activeImgFilter = imgFilters.querySelector(`.img-filters__button--active`);
     if (evt.target !== activeImgFilter) {
@@ -35,11 +49,16 @@
     }
   };
 
-  const filterPhotos = function (evt, photos) {
+  /**
+   * Фильтрует фотографии и отрисовывает их
+   * @param {event} evt - событие
+   * @param {array} photos - исходный массив данных (объектов фотографий)
+   */
+  const filterPhotos = debounce(function (evt, photos) {
     setButtonsClassNames(evt);
     const filteredPhotos = getFilteredPhotos(evt, photos);
     renderPhotos(filteredPhotos);
-  };
+  });
 
   window.filter = {
     showImgFilters,

@@ -1,21 +1,35 @@
 'use strict';
 
 (function () {
+  const DEBOUNCE_INTERVAL = 500;
 
-  const isEventAtTarget = (evt, action) => {
+  const debounce = function (cb) {
+    let lastTimeout = null;
+
+    return function (...parameters) {
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(function () {
+        cb(...parameters);
+      }, DEBOUNCE_INTERVAL);
+    };
+  };
+
+  const isEventAtTarget = function (evt, action) {
     if (evt.eventPhase === 2) {
       action();
     }
   };
 
-  const isEscEvent = (evt, action) => {
+  const isEscEvent = function (evt, action) {
     if (evt.key === `Escape`) {
       evt.preventDefault();
       action();
     }
   };
 
-  const isEnterEvent = (evt, action) => {
+  const isEnterEvent = function (evt, action) {
     if (evt.key === `Enter`) {
       evt.preventDefault();
       action();
@@ -50,6 +64,7 @@
   };
 
   window.util = {
+    debounce,
     isEventAtTarget,
     isEscEvent,
     isEnterEvent,

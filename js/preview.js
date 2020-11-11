@@ -4,12 +4,13 @@
   const {isEscEvent} = window.util;
 
   const DEFAULT_COMMENTS_NUMBER = 5;
+  const re = /^\d+/;
 
   const body = document.querySelector(`body`);
   const bigPicture = document.querySelector(`.big-picture`);
-  const bigPictureCancelBtn = document.querySelector(`.big-picture__cancel`);
-  const commentsLoader = document.querySelector(`.comments-loader`);
-  const socialCommentsList = document.querySelector(`.social__comments`);
+  const bigPictureCancelBtn = bigPicture.querySelector(`.big-picture__cancel`);
+  const commentsLoader = bigPicture.querySelector(`.comments-loader`);
+  const socialCommentsList = bigPicture.querySelector(`.social__comments`);
   const socialCommentTemplate = socialCommentsList.querySelector(`.social__comment`);
 
   /**
@@ -34,6 +35,11 @@
     bigPictureCancelBtn.addEventListener(`click`, closePreview);
   };
 
+  /**
+   * Отрисовывает комментарий, используя данные из объекта - комментария
+   * @param {object} commentData - объект с данными о комментарии
+   * @return {object} фрагмент кода HTML
+   */
   const renderComment = function (commentData) {
     const socialComment = socialCommentTemplate.cloneNode(true);
     socialComment.querySelector(`.social__picture`).src = commentData.avatar;
@@ -43,6 +49,10 @@
     return socialComment;
   };
 
+  /**
+   * Отрисовывает комментарии на страницу, используя данные из массива объектов - комментариев, удаляет существующие комментарии в контейнере
+   * @param {array} commentsData - массива объектов - комментариев
+   */
   const renderComments = function (commentsData) {
     const existingComments = socialCommentsList.querySelectorAll(`.social__comment`);
     existingComments.forEach(function (existingComment) {
@@ -53,35 +63,40 @@
     for (let i = 0; i < commentsData.length; i++) {
       const socialComment = renderComment(commentsData[i]);
       fragment.appendChild(socialComment);
-      if (i >= DEFAULT_COMMENTS_NUMBER) {
-        socialComment.classList.add(`hidden`);
-      }
-      if (commentsData.length <= DEFAULT_COMMENTS_NUMBER) {
-        commentsLoader.classList.add(`hidden`);
-      } else {
-        commentsLoader.classList.remove(`hidden`);
-      }
+      socialComment.classList.add(`hidden`);
     }
     socialCommentsList.appendChild(fragment);
+    showComments();
   };
 
   commentsLoader.addEventListener(`click`, function () {
-    showMoreComments();
+    showComments();
   });
 
-  const showMoreComments = function () {
-    const socialComments = socialCommentsList.querySelectorAll(`.social__comment`);
-    const commentsNumber = socialComments.length;
-    const commentsHiddenNumber = socialCommentsList.querySelectorAll(`.hidden`).length;
-    const commentsShownNumber = commentsNumber - commentsHiddenNumber;
-    for (let i = commentsShownNumber; i < Math.min(commentsNumber, commentsShownNumber + DEFAULT_COMMENTS_NUMBER); i++) {
-      socialComments[i].classList.remove(`hidden`);
+  /**
+   * Показывает комментарии
+   */
+  const showComments = function () {
+    const comments = socialCommentsList.querySelectorAll(`.social__comment`);
+    const commentsShown = bigPicture.querySelector(`.social__comment-count`);
+    const numberOfComments = comments.length;
+    const numberOfHidden = socialCommentsList.querySelectorAll(`.hidden`).length;
+    const numberOfShown = numberOfComments - numberOfHidden;
+    for (let i = numberOfShown; i < Math.min(numberOfComments, numberOfShown + DEFAULT_COMMENTS_NUMBER); i++) {
+      comments[i].classList.remove(`hidden`);
+      commentsShown.innerHTML = commentsShown.innerHTML.replace(commentsShown.innerHTML.match(re), i + 1);
     }
-    if (commentsNumber < commentsShownNumber + DEFAULT_COMMENTS_NUMBER) {
+    if (numberOfComments <= numberOfShown + DEFAULT_COMMENTS_NUMBER) {
       commentsLoader.classList.add(`hidden`);
+    } else {
+      commentsLoader.classList.remove(`hidden`);
     }
   };
 
+  /**
+   * Показывает фото в полноэкранном режиме (отрисовка комментариев, фото, открытие превью)
+   * @param {object} previewData - объекта с данными о фото
+   */
   const openBigPicture = function (previewData) {
     renderComments(previewData.comments);
     renderPreview(previewData);

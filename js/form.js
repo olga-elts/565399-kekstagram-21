@@ -42,7 +42,6 @@ const onUploadFormEscPress = (evt) => {
 
 /**
  * Открывает форму редактирования, добавляет слушитель события keydown
- * @param {event} evt - событие
  */
 const openUploadForm = () => {
   imgUploadOverlay.classList.remove(`hidden`);
@@ -53,7 +52,6 @@ const openUploadForm = () => {
 
 /**
  * Закрывает форму редактирования, сбрасывает эффект, масштаб, очищает поля ввода, удаляет слушитель события keydown
- * @param {event} evt - событие
  */
 const closeUploadForm = () => {
   resetEffect();

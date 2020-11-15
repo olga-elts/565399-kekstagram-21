@@ -25,7 +25,6 @@ const renderPreview = (previewData) => {
 
 /**
  * Открывает превью, добавляет слушитель события keydown и слушатель клика на кнопку закрытия
- * @param {event} evt - событие
  */
 const openPreview = () => {
   bigPicture.classList.remove(`hidden`);
@@ -104,7 +103,6 @@ const openBigPicture = (previewData) => {
 
 /**
  * Закрывает превью, удаляет слушитель события keydown и слушатель клика на кнопку закрытия
- * @param {event} evt - событие
  */
 const closePreview = () => {
   bigPicture.classList.add(`hidden`);

@@ -1,35 +1,36 @@
 'use strict';
 
-(function () {
+(() => {
   const DEBOUNCE_INTERVAL = 500;
+  const EVENT_AT_TARGET_PHASE = 2;
 
-  const debounce = function (cb) {
+  const debounce = (cb) => {
     let lastTimeout = null;
 
-    return function (...parameters) {
+    return (...parameters) => {
       if (lastTimeout) {
         window.clearTimeout(lastTimeout);
       }
-      lastTimeout = window.setTimeout(function () {
+      lastTimeout = window.setTimeout(() => {
         cb(...parameters);
       }, DEBOUNCE_INTERVAL);
     };
   };
 
-  const isEventAtTarget = function (evt, action) {
-    if (evt.eventPhase === 2) {
+  const isEventAtTarget = (evt, action) => {
+    if (evt.eventPhase === EVENT_AT_TARGET_PHASE) {
       action();
     }
   };
 
-  const isEscEvent = function (evt, action) {
+  const isEscEvent = (evt, action) => {
     if (evt.key === `Escape`) {
       evt.preventDefault();
       action();
     }
   };
 
-  const isEnterEvent = function (evt, action) {
+  const isEnterEvent = (evt, action) => {
     if (evt.key === `Enter`) {
       evt.preventDefault();
       action();
@@ -41,7 +42,7 @@
    * @param {Object} elem - DOM-элемент
    * @return {Object} - объект с координатами элемента по осям Y и X
    */
-  const getCoords = function (elem) {
+  const getCoords = (elem) => {
     const box = elem.getBoundingClientRect();
 
     return {
@@ -55,7 +56,7 @@
    * @param {Array} array -  случайный массив
    * @return {Array} - перемешанный массив
    */
-  const getshuffledArray = function (array) {
+  const getShuffledArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[j], array[i]] = [array[i], array[j]];
@@ -69,6 +70,6 @@
     isEscEvent,
     isEnterEvent,
     getCoords,
-    getshuffledArray
+    getShuffledArray
   };
 })();

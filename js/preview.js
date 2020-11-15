@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+(() => {
   const {isEscEvent} = window.util;
 
   const DEFAULT_COMMENTS_NUMBER = 5;
@@ -17,7 +17,7 @@
    * Отрисовывает превью, заполняет данные по кол-ву лайков и комментариям
    * @param {object} previewData - данные фотографии для превью
    */
-  const renderPreview = function (previewData) {
+  const renderPreview = (previewData) => {
     bigPicture.querySelector(`.big-picture__img img`).src = previewData.url;
     bigPicture.querySelector(`.comments-count`).textContent = previewData.comments.length;
     bigPicture.querySelector(`.social__caption`).textContent = previewData.description;
@@ -28,7 +28,7 @@
    * Открывает превью, добавляет слушитель события keydown и слушатель клика на кнопку закрытия
    * @param {event} evt - событие
    */
-  const openPreview = function () {
+  const openPreview = () => {
     bigPicture.classList.remove(`hidden`);
     body.classList.add(`modal-open`);
     document.addEventListener(`keydown`, onBigPictureEscPress);
@@ -40,7 +40,7 @@
    * @param {object} commentData - объект с данными о комментарии
    * @return {object} фрагмент кода HTML
    */
-  const renderComment = function (commentData) {
+  const renderComment = (commentData) => {
     const socialComment = socialCommentTemplate.cloneNode(true);
     socialComment.querySelector(`.social__picture`).src = commentData.avatar;
     socialComment.querySelector(`.social__picture`).alt = commentData.name;
@@ -53,9 +53,9 @@
    * Отрисовывает комментарии на страницу, используя данные из массива объектов - комментариев, удаляет существующие комментарии в контейнере
    * @param {array} commentsData - массива объектов - комментариев
    */
-  const renderComments = function (commentsData) {
+  const renderComments = (commentsData) => {
     const existingComments = socialCommentsList.querySelectorAll(`.social__comment`);
-    existingComments.forEach(function (existingComment) {
+    existingComments.forEach((existingComment) => {
       socialCommentsList.removeChild(existingComment);
     });
 
@@ -69,14 +69,14 @@
     showComments();
   };
 
-  commentsLoader.addEventListener(`click`, function () {
+  commentsLoader.addEventListener(`click`, () => {
     showComments();
   });
 
   /**
    * Показывает комментарии
    */
-  const showComments = function () {
+  const showComments = () => {
     const comments = socialCommentsList.querySelectorAll(`.social__comment`);
     const commentsShown = bigPicture.querySelector(`.social__comment-count`);
     const numberOfComments = comments.length;
@@ -97,7 +97,7 @@
    * Показывает фото в полноэкранном режиме (отрисовка комментариев, фото, открытие превью)
    * @param {object} previewData - объекта с данными о фото
    */
-  const openBigPicture = function (previewData) {
+  const openBigPicture = (previewData) => {
     renderComments(previewData.comments);
     renderPreview(previewData);
     openPreview();
@@ -107,7 +107,7 @@
    * Закрывает превью, удаляет слушитель события keydown и слушатель клика на кнопку закрытия
    * @param {event} evt - событие
    */
-  const closePreview = function () {
+  const closePreview = () => {
     bigPicture.classList.add(`hidden`);
     body.classList.remove(`modal-open`);
     document.removeEventListener(`keydown`, onBigPictureEscPress);
@@ -118,7 +118,7 @@
    * Закрывает превью при нажатии кнопки Esc
    * @param {event} evt - событие
    */
-  const onBigPictureEscPress = function (evt) {
+  const onBigPictureEscPress = (evt) => {
     isEscEvent(evt, closePreview);
   };
 

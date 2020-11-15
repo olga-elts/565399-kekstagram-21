@@ -1,8 +1,8 @@
 'use strict';
 
-(function () {
-  const HASHTAG_MAXLENGTH = 20;
-  const HASHTAGS_MAXNUMBER = 5;
+(() => {
+  const HASHTAG_MAX_LENGTH = 20;
+  const HASHTAGS_MAX_NUMBER = 5;
 
   const re = /^#[а-яА-Я\w]+$/;
 
@@ -11,8 +11,8 @@
    * Выводит сообщение о превышении допустимого количества хэштегов
    * @param {Array} tags - массив хэштегов
    */
-  const checkArrayLength = function (tags) {
-    if (tags.length > HASHTAGS_MAXNUMBER) {
+  const checkArrayLength = (tags) => {
+    if (tags.length > HASHTAGS_MAX_NUMBER) {
       textHashtagsInput.setCustomValidity(`Слишком много хэштегов!`);
     } else {
       textHashtagsInput.setCustomValidity(``);
@@ -23,11 +23,9 @@
    * Выводит сообщение при наличии дублирующихся хэштегов
    * @param {Array} tags - массив хэштегов
    */
-  const checkDuplicates = function (tags) {
+  const checkDuplicates = (tags) => {
     let yesDuplicates = false;
-    const tagsUppercase = tags.map(function (tag) {
-      return tag.toUpperCase();
-    });
+    const tagsUppercase = tags.map((tag) => tag.toUpperCase());
     const tagsUnique = new Set(tagsUppercase);
     if (tagsUnique.size !== tags.length) {
       yesDuplicates = true;
@@ -43,10 +41,8 @@
    * Выводит сообщение в случае использования хотя бы в одном хэштеге недопустимых символов
    * @param {Array} tags - массив хэштегов
    */
-  const checkHashtagsValidity = function (tags) {
-    const invalid = tags.some(function (tag) {
-      return !re.test(tag);
-    });
+  const checkHashtagsValidity = (tags) => {
+    const invalid = tags.some((tag) => !re.test(tag));
     if (invalid) {
       textHashtagsInput.setCustomValidity(`Хэштег должен состоять только из букв, чисел и нижнего подчеркивания!`);
     } else {
@@ -58,12 +54,10 @@
    * Выводит сообщение в случае превышения длины хотя бы одного хэштега
    * @param {Array} tags - массив хэштегов
    */
-  const checkHashtagsLength = function (tags) {
-    const tooLong = tags.some(function (tag) {
-      return tag.length > HASHTAG_MAXLENGTH;
-    });
+  const checkHashtagsLength = (tags) => {
+    const tooLong = tags.some((tag) => tag.length > HASHTAG_MAX_LENGTH);
     if (tooLong) {
-      textHashtagsInput.setCustomValidity(`Максимальная длина хэштега - ` + HASHTAG_MAXLENGTH);
+      textHashtagsInput.setCustomValidity(`Максимальная длина хэштега - ` + HASHTAG_MAX_LENGTH);
     } else {
       textHashtagsInput.setCustomValidity(``);
     }

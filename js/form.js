@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+(() => {
   const {isEscEvent} = window.util;
   const {resetEffect, resetScale} = window.editing;
 
@@ -16,9 +16,9 @@
   /**
    * Заменяет дефолтную картинку превью и эффектов на загруженную
    */
-  const setUploadedPhoto = function () {
+  const setUploadedPhoto = () => {
     imgUploadPreview.src = URL.createObjectURL(uploadFileInput.files[0]);
-    effectsPreviews.forEach(function (effectsPreview) {
+    effectsPreviews.forEach((effectsPreview) => {
       effectsPreview.style.backgroundImage = `url("${URL.createObjectURL(uploadFileInput.files[0])}")`;
     });
   };
@@ -26,7 +26,7 @@
   /**
    * Очищает поля ввода в форме, "чекает" дефолтный эффект (`none`)
    */
-  const cleanInputs = function () {
+  const cleanInputs = () => {
     uploadFileInput.value = ``;
     textHashtagsInput.value = ``;
     textDescriptionInput.value = ``;
@@ -37,7 +37,7 @@
    * Закрывает форму редактирования фото при нажатии кнопки Esc
    * @param {event} evt - событие
    */
-  const onUploadFormEscPress = function (evt) {
+  const onUploadFormEscPress = (evt) => {
     isEscEvent(evt, closeUploadForm);
   };
 
@@ -45,7 +45,7 @@
    * Открывает форму редактирования, добавляет слушитель события keydown
    * @param {event} evt - событие
    */
-  const openUploadForm = function () {
+  const openUploadForm = () => {
     imgUploadOverlay.classList.remove(`hidden`);
     body.classList.add(`modal-open`);
     setUploadedPhoto();
@@ -56,7 +56,7 @@
    * Закрывает форму редактирования, сбрасывает эффект, масштаб, очищает поля ввода, удаляет слушитель события keydown
    * @param {event} evt - событие
    */
-  const closeUploadForm = function () {
+  const closeUploadForm = () => {
     resetEffect();
     resetScale();
     cleanInputs();

@@ -1,7 +1,7 @@
 'use strict';
 
-(function () {
-  const {getshuffledArray, debounce} = window.util;
+(() => {
+  const {getShuffledArray, debounce} = window.util;
   const {renderPhotos} = window.gallery;
 
   const PHOTOS_NUMBER = 10;
@@ -11,7 +11,7 @@
   /**
    * Показывает фильтры изображений
    */
-  const showImgFilters = function () {
+  const showImgFilters = () => {
     imgFilters.classList.remove(`img-filters--inactive`);
   };
 
@@ -21,16 +21,15 @@
    * @param {array} photos - исходный массив данных (объектов фотографий)
    * @return {array} - новый или исходный массив данных (объектов фотографий)
    */
-  const getFilteredPhotos = function (evt, photos) {
+  const getFilteredPhotos = (evt, photos) => {
     const filter = evt.target.id;
     switch (filter) {
       case `filter-discussed`:
-        const sortedPhotos = photos.slice().sort(function (a, b) {
+        return photos.slice().sort((a, b) => {
           return b.comments.length - a.comments.length;
         });
-        return sortedPhotos;
       case `filter-random`:
-        const randomPhotos = getshuffledArray(photos.slice());
+        const randomPhotos = getShuffledArray(photos.slice());
         return randomPhotos.slice(0, PHOTOS_NUMBER);
       default:
         return photos;
@@ -41,7 +40,7 @@
    * Применяет класс active к кнопке - цели события при его наступлении
    * @param {event} evt - событие
    */
-  const setButtonsClassNames = function (evt) {
+  const setButtonsClassNames = (evt) => {
     const activeImgFilter = imgFilters.querySelector(`.img-filters__button--active`);
     if (evt.target !== activeImgFilter) {
       activeImgFilter.classList.remove(`img-filters__button--active`);
@@ -54,7 +53,7 @@
    * @param {event} evt - событие
    * @param {array} photos - исходный массив данных (объектов фотографий)
    */
-  const filterPhotos = debounce(function (evt, photos) {
+  const filterPhotos = debounce((evt, photos) => {
     setButtonsClassNames(evt);
     const filteredPhotos = getFilteredPhotos(evt, photos);
     renderPhotos(filteredPhotos);

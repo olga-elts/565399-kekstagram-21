@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+(() => {
   const effectToFilter = {
     chrome: `grayscale`,
     sepia: `sepia`,
@@ -69,7 +69,7 @@
    * Устанавливает интенсивность эффекта, примененного к фотографии, при перемещении ползунка
    * @param {number} level - интенсивность эффекта
    */
-  const setEffectLevel = function (level) {
+  const setEffectLevel = (level) => {
     const effectApplied = document.querySelector(`.effects__radio:checked`).value;
     const filterApplied = effectToFilter[effectApplied];
     const filterMin = filterMinMax[filterApplied].MIN;
@@ -85,7 +85,7 @@
    * Устанавливает стили ползунка и значение интенсивности эффекта
    * @param {number} factor - коэффициент интенсивности эффекта
    */
-  const setPinStyles = function (factor) {
+  const setPinStyles = (factor) => {
     effectLevelPin.style.left = DefaultSettings.EFFECT_LEVEL * factor + `%`;
     effectLevelDepth.style.width = DefaultSettings.EFFECT_LEVEL * factor + `%`;
     effectLevelValue.value = DefaultSettings.EFFECT_LEVEL * factor;
@@ -94,7 +94,7 @@
   /**
    * Cбрасывает фильтр фотографии
    */
-  const resetEffect = function () {
+  const resetEffect = () => {
     imgUploadPreview.style.filter = ``;
     imgUploadPreview.className = ``;
   };
@@ -103,7 +103,7 @@
    * Применяет эффект к фотографии
    * @param {string} effect - название эффекта
    */
-  const applyEffect = function (effect) {
+  const applyEffect = (effect) => {
     effectLevel.classList.remove(`hidden`);
     imgUploadPreview.classList.add(`effects__preview--` + effect);
     if (effect === `none`) {
@@ -114,7 +114,7 @@
   /**
    * Сбрасывает масштаб
    */
-  const resetScale = function () {
+  const resetScale = () => {
     imgUploadPreview.style.transform = ``;
     scaleControlValue.value = Scale.MAX + Scale.UNIT;
   };
@@ -125,7 +125,7 @@
    * @param {number} scaleMax - максимальное значение масштаба
    * @param {number} step - шаг изменения масштаба
    */
-  const changeScale = function (scaleMin, scaleMax, step) {
+  const changeScale = (scaleMin, scaleMax, step) => {
     let scale = parseFloat(scaleControlValue.value);
     if (scale < scaleMin - step) {
       scale = scaleMin;

@@ -1,8 +1,9 @@
 'use strict';
-(function () {
+
+(() => {
   const {isEventAtTarget, isEscEvent} = window.util;
 
-  const STATUS_CODE_SUCCESSFULL = 200;
+  const STATUS_CODE_SUCCESS_FULL = 200;
 
   const Load = {
     METHOD: `GET`,
@@ -30,37 +31,37 @@
   const successBlock = document.querySelector(`#success`).content.querySelector(`.success`).cloneNode(true);
   const successButton = successBlock.querySelector(`.success__button`);
 
-  const closeErrorBlock = function () {
+  const closeErrorBlock = () => {
     errorBlock.remove();
     document.removeEventListener(`keydown`, onErrorBlockEscPress);
     errorBlock.removeEventListener(`click`, onErrorBlockClick);
     errorButton.removeEventListener(`click`, onErrorBlockClick);
   };
 
-  const closeSuccessBlock = function () {
+  const closeSuccessBlock = () => {
     successBlock.remove();
     document.removeEventListener(`keydown`, onSuccessBlockEscPress);
     successButton.removeEventListener(`click`, onSuccessBlockClick);
     successBlock.removeEventListener(`click`, onSuccessBlockClick);
   };
 
-  const onErrorBlockEscPress = function (evt) {
+  const onErrorBlockEscPress = (evt) => {
     isEscEvent(evt, closeErrorBlock);
   };
 
-  const onSuccessBlockEscPress = function (evt) {
+  const onSuccessBlockEscPress = (evt) => {
     isEscEvent(evt, closeSuccessBlock);
   };
 
-  const onErrorBlockClick = function (evt) {
+  const onErrorBlockClick = (evt) => {
     isEventAtTarget(evt, closeErrorBlock);
   };
 
-  const onSuccessBlockClick = function (evt) {
+  const onSuccessBlockClick = (evt) => {
     isEventAtTarget(evt, closeSuccessBlock);
   };
 
-  const showErrorBlock = function (requestType, message) {
+  const showErrorBlock = (requestType, message) => {
     mainSection.appendChild(errorBlock);
     errorBlock.querySelector(`.error__title`).textContent = message;
     errorButton.textContent = requestType.BUTTON;
@@ -69,14 +70,14 @@
     errorButton.addEventListener(`click`, onErrorBlockClick);
   };
 
-  const showSuccessBlock = function () {
+  const showSuccessBlock = () => {
     mainSection.appendChild(successBlock);
     successButton.addEventListener(`click`, onSuccessBlockClick);
     document.addEventListener(`keydown`, onSuccessBlockEscPress);
     successBlock.addEventListener(`click`, onSuccessBlockClick);
   };
 
-  const makeXhr = function (method, url) {
+  const makeXhr = (method, url) => {
     const xhr = new XMLHttpRequest();
     xhr.responseType = XhrDefault.RESPONSE_TYPE;
     xhr.timeout = XhrDefault.TIMEOUT;
@@ -86,11 +87,11 @@
     return xhr;
   };
 
-  const sendRequest = function (type, onSuccess, onError, data) {
+  const sendRequest = (type, onSuccess, onError, data) => {
     const xhr = makeXhr(type.METHOD, type.URL);
 
-    xhr.addEventListener(`load`, function () {
-      if (xhr.status === STATUS_CODE_SUCCESSFULL) {
+    xhr.addEventListener(`load`, () => {
+      if (xhr.status === STATUS_CODE_SUCCESS_FULL) {
         onSuccess(xhr.response);
       } else {
         const error = `Ошибка ${xhr.status} ${xhr.statusText}`;
@@ -98,11 +99,11 @@
       }
     });
 
-    xhr.addEventListener(`error`, function () {
+    xhr.addEventListener(`error`, () => {
       onError(type, eventToMessage.error);
     });
 
-    xhr.addEventListener(`timeout`, function () {
+    xhr.addEventListener(`timeout`, () => {
       onError(type, eventToMessage.timeout);
     });
 

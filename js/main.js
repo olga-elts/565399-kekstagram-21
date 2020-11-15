@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+(() => {
   const {getCoords} = window.util;
   const {renderPhotos} = window.gallery;
   const {Load, Upload, showErrorBlock, showSuccessBlock, sendRequest} = window.server;
@@ -41,11 +41,11 @@
 
   const checkFunctions = [checkDuplicates, checkArrayLength, checkHashtagsLength, checkHashtagsValidity];
 
-  effectLevelPin.addEventListener(`mousedown`, function () {
+  effectLevelPin.addEventListener(`mousedown`, () => {
     const lineXCoord = getCoords(effectLevelLine).left;
     const deltaXMax = effectLevelLine.offsetWidth;
 
-    const onMouseMove = function (moveEvt) {
+    const onMouseMove = (moveEvt) => {
       moveEvt.preventDefault();
 
       const pinXCoord = moveEvt.clientX;
@@ -58,7 +58,7 @@
       }
     };
 
-    const onMouseUp = function (upEvt) {
+    const onMouseUp = (upEvt) => {
       upEvt.preventDefault();
 
       document.removeEventListener(`mousemove`, onMouseMove);
@@ -69,22 +69,22 @@
     document.addEventListener(`mouseup`, onMouseUp);
   });
 
-  effects.addEventListener(`click`, function (evt) {
+  effects.addEventListener(`click`, (evt) => {
     const effect = evt.target.value;
     resetEffect();
     setPinStyles(DefaultSettings.FACTOR);
     applyEffect(effect);
   });
 
-  scaleControlSmaller.addEventListener(`click`, function () {
+  scaleControlSmaller.addEventListener(`click`, () => {
     changeScale(Scale.MIN, Scale.MAX, -Scale.STEP);
   });
 
-  scaleControlBigger.addEventListener(`click`, function () {
+  scaleControlBigger.addEventListener(`click`, () => {
     changeScale(Scale.MIN, Scale.MAX, Scale.STEP);
   });
 
-  textHashtagsInput.addEventListener(`input`, function () {
+  textHashtagsInput.addEventListener(`input`, () => {
     const hashtags = textHashtagsInput.value.trim().split(` `);
     for (let i = 0; i < checkFunctions.length; i++) {
       checkFunctions[i](hashtags);
@@ -97,26 +97,26 @@
     }
   });
 
-  uploadFileInput.addEventListener(`change`, function () {
+  uploadFileInput.addEventListener(`change`, () => {
     openUploadForm();
     resetEffect();
     setPinStyles(DefaultSettings.FACTOR);
     applyEffect(DefaultSettings.EFFECT);
   });
 
-  uploadCancelBtn.addEventListener(`click`, function () {
+  uploadCancelBtn.addEventListener(`click`, () => {
     closeUploadForm();
   });
 
-  imgUploadText.addEventListener(`focusin`, function () {
+  imgUploadText.addEventListener(`focusin`, () => {
     document.removeEventListener(`keydown`, onUploadFormEscPress);
   });
 
-  imgUploadText.addEventListener(`focusout`, function () {
+  imgUploadText.addEventListener(`focusout`, () => {
     document.addEventListener(`keydown`, onUploadFormEscPress);
   });
 
-  form.addEventListener(`submit`, function (evt) {
+  form.addEventListener(`submit`, (evt) => {
     sendRequest(Upload, showSuccessBlock, showErrorBlock, new FormData(form));
     closeUploadForm();
     evt.preventDefault();
@@ -124,7 +124,7 @@
 
   let loadedPhotos;
 
-  const successHandler = function (data) {
+  const successHandler = (data) => {
     loadedPhotos = data;
     renderPhotos(loadedPhotos);
     showImgFilters();
@@ -132,7 +132,7 @@
 
   sendRequest(Load, successHandler, showErrorBlock);
 
-  imgFilters.addEventListener(`click`, function (evt) {
+  imgFilters.addEventListener(`click`, (evt) => {
     filterPhotos(evt, loadedPhotos);
   });
 })();
